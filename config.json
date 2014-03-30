@@ -1,9 +1,12 @@
 {
     "il_data_folder": "/home/nigel/data",
     "plsr_data_folder": "/home/nigel/data",
-    "energy_offer_folder": "/home/nigel/data",
+    "energy_offer_folder": "/home/nigel/data/energy_temp",
     "demand_data_folder": "/home/nigel/data",
     "vspd_gdx_folder": "/home/nigel/data",
     "vspd_result_folder": "/home/nigel/data",
-
+    "wits_ongoing_url": "http://www.electricityinfo.co.nz/comitFta/Ongoing_bidoffer.ongoing",
+    "wits_historic_url": "http://www.electricityinfo.co.nz/comitFta/ongoing_bidoffer.download_monthly_files",
+    "wits_base_url": "http://www.electricityinfo.co.nz",
+    "temporary_location": "/home/nigel/temporary_data"
 }
