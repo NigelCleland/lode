@@ -16,6 +16,9 @@ import pandas as pd
 import itertools
 import shutil
 
+import socket
+socket.setdefaulttimeout(10)
+
 file_path = os.path.abspath(__file__)
 module_path = os.path.split(os.path.split(file_path)[0])[0]
 config_name = os.path.join(module_path, 'config.json')
