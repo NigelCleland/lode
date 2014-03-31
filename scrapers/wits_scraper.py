@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import requests
 import BeautifulSoup
 import urllib2
@@ -14,8 +16,13 @@ import pandas as pd
 import itertools
 import shutil
 
-with open('../config.json', 'rb') as f:
+file_path = os.path.abspath(__file__)
+module_path = os.path.split(os.path.split(file_path)[0])[0]
+config_name = os.path.join(module_path, 'config.json')
+
+with open(config_name, 'rb') as f:
     CONFIG = simplejson.load(f)
+
 
 # map the file locations to different areas:
 FILE_LOCATIONS = {'offers': CONFIG['energy_offer_data_folder'],
@@ -203,7 +210,21 @@ def date_from_filename(fName, pattern, ext):
 
 
 
-
-
 if __name__ == '__main__':
-    pass
+
+    try:
+        mode = sys.argv[1]
+    except IndexError:
+        mode = "Daily"
+
+    patterns = ('offers', 'generatorreserves', 'ilreserves')
+
+    if mode == "Monthly":
+        print "Attempting to populate Monthly Database Files"
+        for pattern in patterns:
+            build_historic_db(pattern)
+    else:
+        print "Attempting to update Daily Database Files"
+        for pattern in patterns:
+            download_dates(pattern)
+
