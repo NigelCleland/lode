@@ -25,35 +25,35 @@ with open(config_name, 'rb') as f:
 
 
 def build_url_demand(url, pattern):
-	
-	wits_url = requests.get(url)
-	soup = BeautifulSoup.BeautifulSoup(wits_url.text)
-	links = soup.findAll('a')
+    
+    wits_url = requests.get(url)
+    soup = BeautifulSoup.BeautifulSoup(wits_url.text)
+    links = soup.findAll('a')
 
-	demand_links = [x for x in links if pattern in x['href']]
-	dict_mapping = {parse_name_to_date(x): x['href'] for x in demand_links}
+    demand_links = [x for x in links if pattern in x['href']]
+    dict_mapping = {parse_name_to_date(x): x['href'] for x in demand_links}
 
-	return dict_mapping
+    return dict_mapping
 
 
 def parse_name_to_date(tag):
-	string_rep = " ".join([y for y in tag.text.split(' ') if y != ''])
-	return datetime.datetime.strptime(string_rep, '%d %B %Y')
+    string_rep = " ".join([y for y in tag.text.split(' ') if y != ''])
+    return datetime.datetime.strptime(string_rep, '%d %B %Y')
 
 
 def build_historic_url_demand():
-	pass
+    pass
 
 def build_demand_file_db(pattern, file_location):
-	
-	# Get the Files
-	all_files = glob.glob(file_location + '/*.csv')
+    
+    # Get the Files
+    all_files = glob.glob(file_location + '/*.csv')
 
-	# Get the dates
-	dates = [date_from_filename(x, pattern, '.csv') for x in all_files]
-	flat_dates = list(itertools.chain.from_iterable(dates))
+    # Get the dates
+    dates = [date_from_filename(x, pattern, '.csv') for x in all_files]
+    flat_dates = list(itertools.chain.from_iterable(dates))
 
-	return flat_dates
+    return flat_dates
 
 
 def date_from_filename(fName, pattern, ext):
@@ -82,61 +82,57 @@ def compare_sets(set_one, set_two):
 
 def download_recent_demand():
 
-	url = CONFIG['wits_recent_demand']
-	download_url_demand(url)
+    url = CONFIG['wits_recent_demand']
+    download_url_demand(url)
 
 
 def download_historic_demand():
 
-	seed_url = CONFIG["wits_historic_demand_base"]
-	seed_links = get_links(seed_url)
+    seed_url = CONFIG["wits_historic_demand_base"]
+    seed_links = get_links(seed_url)
 
-	month_links = [x for x in seed_links if "demand_pages" in x['href']]
+    month_links = [x for x in seed_links if "demand_pages" in x['href']]
 
-	for month in month_links:
-		new_url = os.path.join(CONFIG['wits_base_url'], 'comitFta', month['href'])
-		print new_url
-		download_url_demand(new_url)
+    for month in month_links:
+        new_url = os.path.join(CONFIG['wits_base_url'], 'comitFta', month['href'])
+        download_url_demand(new_url)
 
 
 def get_links(url):
 
-	r = requests.get(url)
-	soup = BeautifulSoup.BeautifulSoup(r.text)
-	return soup.findAll('a')
+    r = requests.get(url)
+    soup = BeautifulSoup.BeautifulSoup(r.text)
+    return soup.findAll('a')
 
 
 def download_url_demand(url):
 
-	pattern = "DemandDaily"
-	file_location = CONFIG['demand_data_folder']
-	ext = ".csv.gz"
+    pattern = "DemandDaily"
+    file_location = CONFIG['demand_data_folder']
+    ext = ".csv.gz"
 
-	url_demand = build_url_demand(url, pattern)
-	file_demand = build_demand_file_db(pattern, file_location)
+    url_demand = build_url_demand(url, pattern)
+    file_demand = build_demand_file_db(pattern, file_location)
 
-	missing_keys = list(compare_sets(url_demand.keys(), file_demand))
+    missing_keys = list(compare_sets(url_demand.keys(), file_demand))
 
-	for date in missing_keys:
-		url_seed = url_demand[date]
-		url_name = "".join([pattern, date.strftime('%Y%m%d'), '.csv'])
-		fName = download_csv_file(url_seed)
-		print fName
+    for date in missing_keys:
+        url_seed = url_demand[date]
+        url_name = "".join([pattern, date.strftime('%Y%m%d'), '.csv'])
+        fName = download_csv_file(url_seed)
 
-		if fName is not None:
-			extracted_name = extract_csvz_file(fName, '.gz')
-			print extracted_name
+        if fName is not None:
+            extracted_name = extract_csvz_file(fName, '.gz')
+            # Rename the file
+            extract_path = os.path.split(extracted_name)[0]
+            move_name = os.path.join(extract_path, url_name)
+            shutil.move(extracted_name, move_name)
 
-			# Rename the file
-			extract_path = os.path.split(extracted_name)[0]
-			move_name = os.path.join(extract_path, url_name)
-			shutil.move(extracted_name, move_name)
-
-			# Move it to the final folder
-			move_completed_file(move_name, file_location)
-			print "%s successfully downloaded" % url_name
-		else:
-			print "%s was a dead link, continuing full steam" % url_seed
+            # Move it to the final folder
+            move_completed_file(move_name, file_location)
+            print "%s successfully downloaded" % url_name
+        else:
+            print "%s was a dead link, continuing full steam" % url_seed
 
 
 def download_csv_file(url_seed):
@@ -144,7 +140,7 @@ def download_csv_file(url_seed):
 
     full_url = CONFIG['wits_base_url'] + url_seed
     save_fName = os.path.join(CONFIG['temporary_location'], 
-    						  os.path.basename(url_seed))
+                              os.path.basename(url_seed))
 
     # Open the URL
     try:
@@ -180,6 +176,21 @@ def move_completed_file(fName, save_loc):
 
     shutil.move(fName, end_location)
 
+
+if __name__ == '__main__':
+
+    try:
+        mode = sys.argv[1]
+    except IndexError:
+        mode = "Daily"
+
+    if mode == "Historic":
+        print "Hitting all of the historic data"
+        download_historic_demand()
+
+    else:
+        print "Hitting the recent demand files"
+        download_recent_demand()
 
 
 
