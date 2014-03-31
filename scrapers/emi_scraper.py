@@ -37,7 +37,7 @@ def download_monthly_prices():
 
 	url = CONFIG['emi_final_prices']
 	file_location = CONFIG['final_price_data_folder']
-	pattern = '_Final_prices'
+	pattern = 'Final_prices'
 
 	existing_files = build_file_db(file_location, pattern)
 	url_files = build_url_db(url, pattern)
@@ -74,15 +74,17 @@ def build_url_db(url, pattern):
 	all_links = get_links(url)
 	all_files = [x for x in all_links if pattern in x['href']]
 
-	DB = {monthly_dates_from_filename(x['href'], pattern, '.csv'): x['href'] for x in all_files}
+	DB = {monthly_dates_from_filename(x['href'], pattern, '.csv', rename="Final_pricing"): x['href'] for x in all_files}
 
 	return DB
 
 
-def monthly_dates_from_filename(x, pattern, ext):
+def monthly_dates_from_filename(x, pattern, ext, rename=None):
 
 	base_str = os.path.basename(x)
-	datestring = base_str.replace(pattern, '').replace(ext, '')
+	if rename:
+		base_str = base_str.replace(rename, pattern)
+	datestring = base_str.replace(pattern, '').replace(ext, '').replace('_', '')
 
 	return datetime.datetime.strptime(datestring, '%Y%m')
 
@@ -115,6 +117,7 @@ def move_completed_file(fName, save_loc):
 
     basename = os.path.basename(fName)
     end_location = os.path.join(save_loc, basename)
+    end_location = end_location.replace('Final_pricing', 'Final_prices')
 
     shutil.move(fName, end_location)
 

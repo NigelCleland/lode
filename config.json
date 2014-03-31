@@ -9,11 +9,17 @@
     "vspd_result_folder": "/home/ncle778/data",
     "wits_ongoing_url": "http://www.electricityinfo.co.nz/comitFta/Ongoing_bidoffer.ongoing",
     "wits_historic_url": "http://www.electricityinfo.co.nz/comitFta/ongoing_bidoffer.download_monthly_files",
-    "wits_base_url": "http://www.electricityinfo.co.nz",
+    "wits_base_url": "http://www.electricityinfo.co.nz/",
     "wits_recent_demand": "http://electricityinfo.co.nz/comitFta/ftaPage.demand",
     "wits_historic_demand_base": "http://electricityinfo.co.nz/comitFta/web_gxp_demand_pages.downloadFiles",
     "temporary_location": "/home/ncle778/temporary_data",
     "emi_final_prices": "http://www.emi.ea.govt.nz/Datasets/Browse?directory=%2FFinal_prices&parentDirectory=%2FDatasets%2FWholesale%2FFinal_pricing",
     "final_price_data_folder": "/media/ncle778/Seagate Expansion Drive/Nodal_Prices",
-    "emi_base_url": "http://www.emi.ea.govt.nz"
+    "emi_base_url": "http://www.emi.ea.govt.nz/",
+    "EMI_Final_Prices": {"pattern": "Final_prices",
+                         "url": "http://www.emi.ea.govt.nz/Datasets/Browse?directory=%2FFinal_prices&parentDirectory=%2FDatasets%2FWholesale%2FFinal_pricing",
+                         "file_location": "/media/ncle778/Seagate Expansion Drive/Nodal_Prices",
+                         "date_type": "Monthly",
+                         "rename": "Final_pricing",
+                         "extension": ".csv"}
 }
