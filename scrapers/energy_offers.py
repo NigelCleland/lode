@@ -53,8 +53,12 @@ def build_historic_db(pattern):
     file_location = FILE_LOCATIONS[pattern]
 
     historic_files = build_historic_url_base(pattern)
+    existing_files = build_monthly_file_database(pattern, file_location)
 
-    for url_name, url_seed in historic_files.iteritems():
+    unique_keys = list(compare_sets(historic_files.keys(), existing_files))
+
+    for url_name in unique_keys:
+        url_seed = historic_files[url_name]
         print "Beginning to download %s" % url_name
         fName = download_csv_file(url_name, url_seed['href'])
 
@@ -114,6 +118,14 @@ def compare_sets(set_one, set_two):
     s1 = set(set_one)
     s2 = set(set_two)
     return s1.difference(s2)
+
+
+def build_monthly_file_database(pattern, file_location):
+
+    all_files = glob.glob(file_location + '/*.csv')
+    completed_keys = [os.path.basename(x) + '.Z' for x in all_files]
+    return completed_keys
+
 
 
 def build_file_database(pattern, file_location, csv_ext='.csv'):
