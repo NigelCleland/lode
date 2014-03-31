@@ -152,6 +152,7 @@ def download_csv_file(url_seed):
             w.write(opened.read())
     except Exception:
         print "Had difficulties downloading %s, continuing anyway" % full_url
+        save_fName = None
 
     return save_fName
 
