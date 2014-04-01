@@ -25,9 +25,8 @@ config_name = os.path.join(module_path, 'config.json')
 
 class EMIScraper(object):
     """Master Class for Scraping and Downloading EMI Files"""
-    def __init__(self, arg):
+    def __init__(self):
         super(EMIScraper, self).__init__()
-        self.arg = arg
         with open(config_name, 'rb') as f:
             self.CONFIG = simplejson.load(f)
 
@@ -190,4 +189,7 @@ class EMIScraper(object):
         self.date_type = self.CONFIG[seed]['date_type']
         self.ext = self.CONFIG[seed]['extension']
         self.rename = self.CONFIG[seed].get('rename', None)
+
+if __name__ == '__main__':
+    EMI = EMIScraper()
 
