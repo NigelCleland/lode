@@ -111,7 +111,7 @@ class EMIScraper(object):
 
         if date_type == "Monthly":
             self.url_dates = [self.parse_monthly_dates(x['href'], pattern, ext,
-                                                       rename=rename)for x in self.pattern_files]
+                        rename=rename)for x in self.pattern_files]
 
             self.url_base = {self.parse_monthly_dates(x['href'], pattern, ext,
                                                       rename=rename): x['href'] for
