@@ -16,6 +16,8 @@ import pandas as pd
 import itertools
 import shutil
 
+from xmlutils.xml2csv import xml2csv
+
 import socket
 socket.setdefaulttimeout(10)
 
@@ -61,6 +63,11 @@ class EMIScraper(object):
 
     def build_url_dates(self, pattern, ext, rename=None, date_type="Monthly"):
 
+        if ext in ('.gdx', '.XML', '.pdf'):
+            single_mode = True
+        else:
+            single_mode = False
+
         if date_type == "Monthly":
             self.url_dates = [self.parse_monthly_dates(x['href'], pattern, ext, 
                                 rename=rename)for x in self.pattern_files]
@@ -73,8 +80,8 @@ class EMIScraper(object):
             all_dates = [self.parse_daily_dates(x['href'], pattern, ext, rename=rename)
                             for x in self.pattern_files]
             self.url_dates = list(itertools.chain.from_iterable(all_dates))
-            self.url_base = {self.parse_daily_dates(x['href'], pattern, ext, rename=rename): x['href']
-                            for x in self.pattern_files}
+            self.url_base = {self.parse_daily_dates(x['href'], pattern, ext, 
+                                rename=rename, single_mode=single_mode): x['href'] for x in self.pattern_files}
 
 
     def build_unique_url_dates(self):
@@ -84,34 +91,54 @@ class EMIScraper(object):
 
 
     def parse_monthly_dates(self, x, pattern, ext, rename=None):
-        base_str = os.path.basename(x)
-        if rename:
-            base_str = base_str.replace(rename, pattern)
-
-        datestring = base_str.replace(pattern, '').replace(ext, '').replace('_','')
-
+        datestring = self.scrub_string(x, pattern, ext, rename=rename)
         return datetime.datetime.strptime(datestring, '%Y%m')
 
 
-    def parse_daily_dates(self, x, pattern, ext, rename=None):
-        base_str = os.path.basename(fName)
+    def scrub_string(self, x, pattern, ext, rename):
+
+        base_str = os.path.basename(x)
+        if ext == '.gdx':
+            replacers = ('x_F', '_F', '_I', 'a', 'b')
+            for each in replacers:
+                base_str = base_str.replace(each, '')
+
+            # cannot just blindly purge all x's as they're in the extension
+            base_str = base_str.replace('x.gdx', '.gdx')
+        
         if rename:
             base_str = base_str.replace(rename, pattern)
-        
-        datestring = base_str.replace(pattern, '').replace(ext, '').replace('_', '')
+
+        final_replacers = (pattern, ext, ext.lower(), ext.upper(), '_', ".csv")
+        datestring = base_str
+        for each in final_replacers:
+            datestring = datestring.replace(each, '')
+
+        return datestring
+
+
+    def parse_daily_dates(self, x, pattern, ext, rename=None, single_mode=False):
+        datestring = self.scrub_string(x, pattern, ext, rename=rename)
         # Check if it's a monthly file or a daily one
-        if len(datestring) < 7:
+        if len(datestring) == 7:
             date = datetime.datetime.strptime(datestring, '%Y%m')
             dates = [datetime.datetime(date.year, date.month, x) for x in
                 range(1, calendar.monthrange(date.year, date.month)[1] +1)]
             return dates
 
-        return [datetime.datetime.strptime(datestring, '%Y%m%d')]
+        elif len(datestring) == 8:
+            if single_mode:
+                return datetime.datetime.strptime(datestring, '%Y%m%d')
+            
+            return [datetime.datetime.strptime(datestring, '%Y%m%d')]
+
+        else:
+            return None
 
 
     def build_file_db(self, file_location, pattern, ext, rename=None, date_type="Monthly"):
 
-        all_files = glob.glob(file_location + '/*')
+        all_files = glob.glob(file_location + '/*' + ext)
 
         if date_type == "Monthly":
             flat_dates = [self.parse_monthly_dates(x, pattern, ext, rename=rename)
@@ -163,20 +190,29 @@ class EMIScraper(object):
             fName = self.download_csv_file(url_seed)
 
             if fName is not None:
-                self.move_completed_file(fName, file_location)
+                final_location = self.move_completed_file(fName, file_location, 
+                                            pattern, rename=rename)
                 print "%s succesfully downloaded" % os.path.basename(fName)
+
+                if ext == ".XML":
+                    self.parse_xml_to_csv(final_location)
 
             else:
                 print "%s was a dead link, continuing full steam" % url_seed
 
 
-    def move_completed_file(self, fName, save_loc):
+    def move_completed_file(self, fName, save_loc, pattern, rename=None):
 
         basename = os.path.basename(fName)
         end_location = os.path.join(save_loc, basename)
-        end_location = end_location.replace('Final_pricing', 'Final_prices')
+        if rename:
+            end_location = end_location.replace(rename, pattern)
 
         shutil.move(fName, end_location)
+
+        return end_location
+
+
 
 
     def synchronise_information(self, seed):
@@ -205,10 +241,18 @@ class EMIScraper(object):
         self.refresh_config()
         seeds = [key for key in self.CONFIG.keys() if "EMI" in key]
         for seed in seeds:
+            print "Beginning Synchronisation for %s" % seed
             self.synchronise_information(seed)
+
+    def parse_xml_to_csv(self, fName):
+
+        output_name = fName.replace('.XML', '.csv')
+        converter = xml2csv(fName, output_name, encoding="utf-8")
+        converter.convert(tag="Row")
 
 
 
 if __name__ == '__main__':
     EMI = EMIScraper()
 
+    EMI.refresh_all_information()
