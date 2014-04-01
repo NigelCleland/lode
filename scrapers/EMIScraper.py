@@ -213,8 +213,6 @@ class EMIScraper(object):
         return end_location
 
 
-
-
     def synchronise_information(self, seed):
         self.set_parameters(seed)
 
@@ -244,6 +242,7 @@ class EMIScraper(object):
             print "Beginning Synchronisation for %s" % seed
             self.synchronise_information(seed)
 
+
     def parse_xml_to_csv(self, fName):
 
         output_name = fName.replace('.XML', '.csv')
@@ -254,5 +253,4 @@ class EMIScraper(object):
 
 if __name__ == '__main__':
     EMI = EMIScraper()
-
     EMI.refresh_all_information()
