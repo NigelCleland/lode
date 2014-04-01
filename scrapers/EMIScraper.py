@@ -132,7 +132,7 @@ class EMIScraper(object):
         return self
 
     def build_unique_url_dates(self):
-        """ Compare two lists of dates and get the unique ones""""
+        """ Compare two lists of dates and get the unique ones"""
 
         self.unique_urls = self.get_list_difference(self.url_dates,
                                                     self.existing_dates)
