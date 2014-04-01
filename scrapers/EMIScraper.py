@@ -23,17 +23,21 @@ file_path = os.path.abspath(__file__)
 module_path = os.path.split(os.path.split(file_path)[0])[0]
 config_name = os.path.join(module_path, 'config.json')
 
+
+
 class EMIScraper(object):
     """Master Class for Scraping and Downloading EMI Files"""
     def __init__(self):
         super(EMIScraper, self).__init__()
-        with open(config_name, 'rb') as f:
-            self.CONFIG = simplejson.load(f)
+        self.refresh_config()
 
         self.base_url = self.CONFIG['emi_base_url']
         self.temp_loc = self.CONFIG['temporary_location']
 
 
+    def refresh_config(self):
+        with open(config_name, 'rb') as f:
+            self.CONFIG = simplejson.load(f)
 
 
     def get_links(self, url):
@@ -41,6 +45,7 @@ class EMIScraper(object):
         soup = BeautifulSoup.BeautifulSoup(r.text)
         self.all_links = soup.findAll('a')
         return self
+
 
     def build_url_db(self, url, pattern, ext, match_type='href', 
                      rename=None, date_type="Monthly"):
@@ -52,6 +57,7 @@ class EMIScraper(object):
             self.pattern_files = [x for x in self.all_links if pattern in x.text]
 
         self.build_url_dates(pattern, ext, rename=rename, date_type=date_type)
+
 
     def build_url_dates(self, pattern, ext, rename=None, date_type="Monthly"):
 
@@ -125,6 +131,7 @@ class EMIScraper(object):
         s2 = set(set_two)
         return list(s1.difference(s2))
 
+
     def download_csv_file(self, url_seed):
 
         if url_seed[0] == '/':
@@ -163,7 +170,6 @@ class EMIScraper(object):
                 print "%s was a dead link, continuing full steam" % url_seed
 
 
-
     def move_completed_file(self, fName, save_loc):
 
         basename = os.path.basename(fName)
@@ -171,8 +177,6 @@ class EMIScraper(object):
         end_location = end_location.replace('Final_pricing', 'Final_prices')
 
         shutil.move(fName, end_location)
-
-
 
 
     def synchronise_information(self, seed):
@@ -189,6 +193,21 @@ class EMIScraper(object):
         self.date_type = self.CONFIG[seed]['date_type']
         self.ext = self.CONFIG[seed]['extension']
         self.rename = self.CONFIG[seed].get('rename', None)
+
+
+    def print_seeds(self):
+        for key in self.CONFIG.keys():
+            if "EMI" in key:
+                print key
+
+
+    def refresh_all_information(self):
+        self.refresh_config()
+        seeds = [key for key in self.CONFIG.keys() if "EMI" in key]
+        for seed in seeds:
+            self.synchronise_information(seed)
+
+
 
 if __name__ == '__main__':
     EMI = EMIScraper()
