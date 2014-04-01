@@ -49,7 +49,7 @@ class EMIScraper(object):
         return self
 
 
-    def build_url_db(self, url, pattern, ext, match_type='href', 
+    def build_url_db(self, url, pattern, ext, match_type='href',
                      rename=None, date_type="Monthly"):
 
         self.get_links(url)
@@ -69,10 +69,10 @@ class EMIScraper(object):
             single_mode = False
 
         if date_type == "Monthly":
-            self.url_dates = [self.parse_monthly_dates(x['href'], pattern, ext, 
+            self.url_dates = [self.parse_monthly_dates(x['href'], pattern, ext,
                                 rename=rename)for x in self.pattern_files]
 
-            self.url_base = {self.parse_monthly_dates(x['href'], pattern, ext, 
+            self.url_base = {self.parse_monthly_dates(x['href'], pattern, ext,
                                 rename=rename): x['href'] for x in self.pattern_files}
 
 
@@ -80,13 +80,13 @@ class EMIScraper(object):
             all_dates = [self.parse_daily_dates(x['href'], pattern, ext, rename=rename)
                             for x in self.pattern_files]
             self.url_dates = list(itertools.chain.from_iterable(all_dates))
-            self.url_base = {self.parse_daily_dates(x['href'], pattern, ext, 
+            self.url_base = {self.parse_daily_dates(x['href'], pattern, ext,
                                 rename=rename, single_mode=single_mode): x['href'] for x in self.pattern_files}
 
 
     def build_unique_url_dates(self):
 
-        self.unique_urls = self.get_list_difference(self.url_dates, 
+        self.unique_urls = self.get_list_difference(self.url_dates,
                                                     self.existing_dates)
 
 
@@ -105,7 +105,7 @@ class EMIScraper(object):
 
             # cannot just blindly purge all x's as they're in the extension
             base_str = base_str.replace('x.gdx', '.gdx')
-        
+
         if rename:
             base_str = base_str.replace(rename, pattern)
 
@@ -129,7 +129,7 @@ class EMIScraper(object):
         elif len(datestring) == 8:
             if single_mode:
                 return datetime.datetime.strptime(datestring, '%Y%m%d')
-            
+
             return [datetime.datetime.strptime(datestring, '%Y%m%d')]
 
         else:
@@ -177,10 +177,10 @@ class EMIScraper(object):
         return save_location
 
 
-    def download_from_urls(self, url, pattern, file_location, rename=None, 
+    def download_from_urls(self, url, pattern, file_location, rename=None,
                            date_type="Monthly", ext='.csv'):
 
-        self.build_file_db(file_location, pattern, ext, rename=rename, 
+        self.build_file_db(file_location, pattern, ext, rename=rename,
                            date_type=date_type)
         self.build_url_db(url, pattern, ext, rename=rename, date_type=date_type)
         self.build_unique_url_dates()
@@ -190,7 +190,7 @@ class EMIScraper(object):
             fName = self.download_csv_file(url_seed)
 
             if fName is not None:
-                final_location = self.move_completed_file(fName, file_location, 
+                final_location = self.move_completed_file(fName, file_location,
                                             pattern, rename=rename)
                 print "%s succesfully downloaded" % os.path.basename(fName)
 
