@@ -14,7 +14,8 @@
     "wits_historic_demand_base": "http://electricityinfo.co.nz/comitFta/web_gxp_demand_pages.downloadFiles",
     "temporary_location": "/home/ncle778/temporary_data",
     "emi_base_url": "http://www.emi.ea.govt.nz/",
-
+    "comit_base_url": "http://www.comithydro.niwa.co.nz",
+    "comit_data_folder" : "/home/humed/data/comit",
     "EMI_Final_Prices": {"pattern": "Final_prices",
                          "url": "http://www.emi.ea.govt.nz/Datasets/Browse?directory=%2FFinal_prices&parentDirectory=%2FDatasets%2FWholesale%2FFinal_pricing",
                          "file_location": "/path/to/storage/location",
