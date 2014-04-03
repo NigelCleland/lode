@@ -23,13 +23,13 @@ formatter = logging.Formatter('|%(asctime)-6s|%(message)s|',
 logstream = logging.StreamHandler()
 logstream.setFormatter(formatter)
 log.addHandler(logstream)
-
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('-u', '--comit_user', action="store", dest='comit_user',
                     help='comit hydro username')
 parser.add_argument('-p', '--comit_pass', action="store", dest='comit_pass',
                     help='comit hydro password')
 args = parser.parse_args()
+
 
 class comit_scraper(object):
     """This class acts as an automatic downloader for the NIWA Comit hydro data
@@ -146,11 +146,11 @@ class comit_scraper(object):
         self.df_inflows = df_inflows.shift(-1).ix[:-1, :]
 
     def to_pickle_and_csv(self):
-        self.df_storage.to_pickle(self.comit_path + 'data/' + self.storage_names['pickle'])
-        self.df_inflows.to_pickle(self.comit_path + 'data/' + self.inflows_names['pickle'])
-        self.df_storage.to_csv(self.comit_path + 'data/' + self.storage_names['csv'])
-        self.df_inflows.to_csv(self.comit_path + 'data/' + self.inflows_names['csv'])
-        done_text = 'GOT comit Hydro data, saved to ' + self.comit_path + 'data/'
+        self.df_storage.to_pickle(os.path.join(self.comit_path, self.storage_names['pickle']))
+        self.df_inflows.to_pickle(os.path.join(self.comit_path, self.inflows_names['pickle']))
+        self.df_storage.to_csv(os.path.join(self.comit_path, self.storage_names['csv']))
+        self.df_inflows.to_csv(os.path.join(self.comit_path, self.inflows_names['csv']))
+        done_text = 'got comit hydro data, saved to ' + self.comit_path + 'data/'
         log.info(done_text.center(msg_len, ' '))
 
 
