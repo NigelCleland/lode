@@ -16,6 +16,8 @@
     "emi_base_url": "http://www.emi.ea.govt.nz/",
     "comit_base_url": "http://www.comithydro.niwa.co.nz",
     "comit_data_folder" : "/home/humed/data/comit",
+    "asx_base_url" : "http://www.sfe.com.au/Content/reports/",
+    "asx_data_folder" : "/home/humed/data/asx",
     "EMI_Final_Prices": {"pattern": "Final_prices",
                          "url": "http://www.emi.ea.govt.nz/Datasets/Browse?directory=%2FFinal_prices&parentDirectory=%2FDatasets%2FWholesale%2FFinal_pricing",
                          "file_location": "/path/to/storage/location",
