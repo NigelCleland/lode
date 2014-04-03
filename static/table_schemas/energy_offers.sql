@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS energy_offers (
-    Company varchar(80),
+    Company varchar(4),
     Grid_Injection_Point varchar(7),
     Station varchar(3),
     Unit int,
@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS energy_offers (
     Band5_Power double precision,
     Band5_Price double precision,
     Created_Date date,
-    Last_Amended_Date date
+    Last_Amended_Date date,
+    PRIMARY KEY (Company, Grid_Injection_Point, Station, Unit, Trading_Date, Trading_Period)
 
 );
