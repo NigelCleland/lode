@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS energy_offers
+CREATE TABLE IF NOT EXISTS energy_offers_%s
 (
 energy_offer_key serial primary key,
 Company varchar(4),

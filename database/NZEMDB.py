@@ -6,6 +6,8 @@ import shutil
 import glob
 import sh
 import csv
+import re
+import datetime
 
 # Do some wizardry to get the location of the config file
 file_path = os.path.abspath(__file__)
@@ -40,13 +42,29 @@ class NZEMDB(object):
         return self
 
 
+    def get_year(self, fName):
+        """ Parse a filename to get the year it is in """
+        year = re.findall(r"\d+", os.path.basename(fName))[0]
+
+        if len(year) == 6:
+            date = datetime.datetime.strptime(year, "%Y%m")
+        else:
+            date = datetime.datetime.strptime(year, "%Y%m%d")
+
+        return date.strftime("%Y")
+
+
     def insert_from_csv(self, table, csvfile):
-        self.check_csv_headers(table, csvfile)
+        year = self.get_year(csvfile)
+        table_year = "%s_%s" % (table, year)
+
+        self.check_csv_headers(table_year, csvfile)
 
         with open(csvfile, 'rb') as f:
             header = f.readline()
 
-        tabname="%s(%s)" % (table, header)
+
+        tabname = "%s(%s)" % (table_year, header)
 
         query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;""" % (tabname, csvfile)
         try:
@@ -101,10 +119,6 @@ class NZEMDB(object):
             for row in data:
                 writer.writerow(row)
 
-
-
-
-
     def execute_and_commit_sql(self, sql):
 
         with pg2.connect(self.conn_string) as conn:
@@ -132,16 +146,28 @@ class NZEMDB(object):
     def create_all_tables(self):
 
         for key in self.schemas.keys():
-            with open(self.schemas[key], 'rb') as f:
+            with open(self.schemas[key]["schema_location"], 'rb') as f:
                 sql = f.read()
 
             sql = """%s""" % sql
-            self.execute_and_commit_sql(sql)
+            if self.schemas[key]["split_by_year"]:
+                for year in self.schemas[key]["split_years"]:
+                    sql_year = sql % year
+                    self.execute_and_commit_sql(sql_year)
+            else:
+                self.execute_and_commit_sql(sql)
 
 
     def drop_table(self, table):
         sql = """DROP TABLE %s""" % table
         self.execute_and_commit_sql(sql)
+
+
+    def drop_tables(self, master_table):
+
+        if self.schemas[master_table]["split_by_year"]:
+            for year in self.schemas[master_table]["split_years"]:
+                self.drop_table("_".join([master_table, str(year)]))
 
 
     def query_to_df(self, sql):
@@ -159,6 +185,14 @@ class NZEMDB(object):
             print f
             self.insert_from_csv(table, f)
             print "%s succesfully loaded to %s" % (f, table)
+
+    def list_all_tables(self):
+        return self.execute_and_fetchall_sql("SELECT * FROM pg_catalog.pg_tables")
+
+    def get_table_size(self, table):
+        SQL = """ SELECT pg_size_pretty(pg_total_relation_size('%s'));""" % table
+        return self.execute_and_fetchall_sql(SQL)
+
 
 
 if __name__ == '__main__':
