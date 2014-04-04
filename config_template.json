@@ -87,5 +87,11 @@
                               "file_location": "/path/to/storage/location",
                               "date_type": "Daily",
                               "rename": "",
-                              "extension": ".pdf"}
+                              "extension": ".pdf"},
+
+    "offer_database": {"database_name": "offer_database",
+                       "database_user": "dbusername",
+                       "database_pass": "dbpassword",
+                       "schemas": {"energy_offers": "/path/to/schemas"}
+                       }
 }
