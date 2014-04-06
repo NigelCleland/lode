@@ -32,6 +32,7 @@ class Scraper(object):
         super(Scraper, self).__init__()
         self.refresh_config()
 
+
     def refresh_config(self):
         """ This permits hot loading of the config file instead of linking
         it to only be initialised on startup
@@ -55,46 +56,6 @@ class Scraper(object):
         self.all_links = soup.findAll('a')
         return self
 
-
-    def scrub_string(self, x, pattern, ext, rename):
-        """ Take a string and get it into a position where it could be
-        converted to a datetime object
-
-        Parameters:
-        -----------
-        x: The string to be parsed
-        pattern: Pattern in the basename to match against
-        ext: Filename extension
-        rename: Optional second string incase filenames have changed.
-
-        Returns:
-        --------
-        datestring: A string which can be parsed
-        """
-        base_str = os.path.basename(x)
-        if ext == '.gdx':
-            # GDX files are named weird. It's a real issue and a major pain.
-            # Could fix this to handle updating?
-            # E.g. emphasis _F over _I etc.
-            replacers = ('x_F', '_F', '_I', 'a', 'b')
-            for each in replacers:
-                base_str = base_str.replace(each, '')
-
-            # cannot just blindly purge all x's as they're in the extension
-            base_str = base_str.replace('x.gdx', '.gdx')
-
-        # In case a file changes midway through.
-        if rename:
-            base_str = base_str.replace(rename, pattern)
-
-        # Get rid of some of the last little things which can get left over
-        # in the file names
-        final_replacers = (pattern, ext, ext.lower(), ext.upper(), '_', ".csv")
-        datestring = base_str
-        for each in final_replacers:
-            datestring = datestring.replace(each, '')
-
-        return datestring
 
     def get_list_difference(self, set_one, set_two):
         """ Use Set Logic to get the difference between two sets.
@@ -143,6 +104,38 @@ class Scraper(object):
             save_location = None
 
         return save_location
+
+    def download_all_from_urls(self, url, pattern, file_location, rename=None, date_type="Monthly", ext=None, match_type=None, cext=None):
+
+        self.build_file_db(file_location, pattern, ext, rename=rename, date_type=date_type)
+        self.build_url_db(url, pattern, ext+cext, rename=rename, date_type=date_type, match_type=match_type)
+        self.build_unique_url_dates()
+
+        self.completed_seeds = []
+
+        for key in self.unique_urls:
+
+            url_seed = self.url_base[key]
+
+            if url_seed not in self.completed_seeds:
+                fName = self.download_file(url_seed)
+
+                if cext != '':
+                    fName = self.extract_csvz_file(fName, cext)
+
+                if fName is not None:
+                    final_location = self.move_completed_file(fName, file_location, pattern, rename=rename)
+                    print "%s successfully downloaded" % os.path.basename(fName)
+
+                    if ext == ".XML":
+                        self.parse_xml_to_csv(final_location)
+
+                else:
+                    print "%s was a dead link, continuing full steam" % url_seed
+
+            self.compelted_seeds.append(url_seed)
+
+
 
     def move_completed_file(self, fName, save_loc, pattern, rename=None):
         """ Moves a file to a new location, has support for doing a final
@@ -198,7 +191,7 @@ class Scraper(object):
         """
         # Change directories so 7Z works
         cwd = os.getcwd()
-        os.chdir(self.CONFIG['temporary_location'])
+        os.chdir(self.temp_loc)
 
         call_signature = ['7z', 'e', fName]
         subprocess.call(call_signature, stdout=sys.stdout,
@@ -210,6 +203,181 @@ class Scraper(object):
         os.chdir(cwd)
 
         return fName.replace(cext, '')
+
+    def build_unique_url_dates(self):
+        """ Compare two lists of dates and get the unique ones"""
+
+        self.unique_urls = self.get_list_difference(self.url_dates,
+                                                    self.existing_dates)
+
+        return self
+
+
+
+    def build_url_dates(self, pattern, ext, rename=None, date_type="Monthly"):
+
+        if pattern == "DemandDaily":
+            self.match_demand_urls()
+
+        else:
+
+            if date_type == "Monthly":
+                self.url_dates = [self.parse_monthly_dates(x['href'], pattern, ext, rename=rename) for x in self.pattern_files]
+                self.url_base = {self.parse_monthly_dates(x['href'], pattern, ext, rename=rename): x['href'] for x in self.pattern_files}
+
+            elif date_type == "Daily":
+                all_dates = [self.parse_daily_dates(x['href'], pattern, ext, rename=rename) for x in self.pattern_files]
+                # Flatten out the dates
+                self.url_dates = list(itertools.chain.from_iterable(all_dates))
+
+                # Here, for each unique date in the parsed file (e.g. Jan 2009 has 31 unique dates)
+                # We match these up against.
+                # Later we filter out duplicate files when we download so this shouldn't
+                # Be too much of an issue (hopefully)
+                self.url_base = {}
+                for x in self.pattern_files:
+                    url = x['href']
+                    for date in list(itertools.chain.from_iterable([self.parse_daily_dates(x['href'], pattern, ext, rename=rename)])):
+                        self.url_base[date] = url
+
+
+
+
+    def parse_monthly_dates(self, x, pattern, ext, rename=None):
+        datestring = self.scrub_string(x, pattern, ext, rename=rename)
+        return datetime.datetime.strptime(datestring, '%Y%m')
+
+
+
+    def parse_daily_dates(self, x, pattern, ext, rename=None, single_mode=False, date_format=None):
+        datestring = self.scrub_string(x, pattern, ext, rename=rename)
+
+        if len(datestring) == 6:
+            date = datetime.datetime.strptime(datestring, "%Y%m")
+            y, m = date.year, date.month
+            dates = [datetime.datetime(y, m, x) for x in range(1, calendar.monthrange(y, m)[1] + 1)]
+            return dates
+
+        elif len(datestring) == 8:
+            if single_mode:
+                return datetime.datetime.strptime(datestring, "%Y%m%d")
+
+            return [datetime.datetime.strptime(datestring, "%Y%m%d")]
+
+        else:
+            return None
+
+
+    def scrub_string(self, x, pattern, ext, rename):
+        """ Take a string and get it into a position where it could be
+        converted to a datetime object
+
+        Parameters:
+        -----------
+        x: The string to be parsed
+        pattern: Pattern in the basename to match against
+        ext: Filename extension
+        rename: Optional second string incase filenames have changed.
+
+        Returns:
+        --------
+        datestring: A string which can be parsed
+        """
+        base_str = os.path.basename(x)
+        if ext == '.gdx':
+            # GDX files are named weird. It's a real issue and a major pain.
+            # Could fix this to handle updating?
+            # E.g. emphasis _F over _I etc.
+            replacers = ('x_F', '_F', '_I', 'a', 'b')
+            for each in replacers:
+                base_str = base_str.replace(each, '')
+
+            # cannot just blindly purge all x's as they're in the extension
+            base_str = base_str.replace('x.gdx', '.gdx')
+
+        # In case a file changes midway through.
+        if rename:
+            base_str = base_str.replace(rename, pattern)
+
+        # Get rid of some of the last little things which can get left over
+        # in the file names
+        final_replacers = (pattern, ext, ext.lower(), ext.upper(), '_', ".csv")
+        datestring = base_str
+        for each in final_replacers:
+            datestring = datestring.replace(each, '')
+
+        return datestring
+
+
+    def build_url_db(self, url, pattern, ext, match_type='href', rename=None, date_type="Monthly"):
+        """ Hits a URL and gets all of the links from this URL then
+        checks these against a pattern.
+
+        Finishes by building the lists of dates from these obejcts
+
+        Parameters:
+        -----------
+        url: A well formed url to be hit
+        pattern: Pattern in the basename to match against
+        ext: Filename extension
+        rename: Optional second string incase filenames have changed.
+        match_type: Match against either the link itself or the name it was
+                    given, recommended to match against the link itself.
+        date_type: Which parser to use
+        """
+
+        self.get_links(url)
+
+        if match_type == "href":
+           self.pattern_files = [x for x in self.all_links if pattern in os.path.basename(x["href"])]
+        elif match_type == 'text':
+           self.pattern_files = [x for x in self.all_links if pattern in x.text]
+
+
+        self.build_url_dates(pattern, ext, rename=rename, date_type=date_type)
+
+
+    def build_file_db(self, file_location, pattern, ext, rename=rename, date_type="Monthly"):
+
+        all_files = glob.glob(file_location + '/*' + ext)
+
+        if date_type == "Monthly":
+            flat_dates = [self.parse_monthly_dates(x, pattern, ext,
+                                               rename=rename) for x in all_files]
+
+        elif date_type == "Daily":
+            all_dates = [self.parse_daily_dates(x, pattern, ext, rename=rename)
+                     for x in all_files]
+            flat_dates = list(itertools.chain.from_iterable(all_dates))
+
+        self.existing_dates = flat_dates
+
+    def match_demand_urls(self):
+
+        self.url_dates = [self.parse_demand_date(x) for x in self.pattern_files]
+        self.url_base = {self.parse_demand_date(x): x['href'] for x in self.pattern_files}
+
+
+    def parse_demand_date(self, x):
+        string_rep = " ".join([y for y in x.text.split(' ') if y != ''])
+        return datetime.datetime.strptime(string_rep, "%d %B %Y")
+
+
+    def set_parameters(self, seed):
+
+        self.file_location = self.CONFIG[seed]['file_location']
+        self.url = self.CONFIG[seed]['url']
+        self.pattern = self.CONFIG[seed]['pattern']
+        self.date_type = self.config[seed]['date_type']
+        self.match_type = self.config[seed]['match_type']
+        self.ext = self.CONFIG[seed]['extension']
+        self.cext = self.CONFIG[seed]['cextension']
+        self.rename = self.CONFIG[seed]['rename']
+        self.base_url = self.CONFIG[seed]['base_url']
+        self.temp_loc = self.CONFIG[seed]['temp_loc']
+
+        if not os.path.isdir(self.file_location):
+            os.mkdir(self.file_location)
 
 
 if __name__ == '__main__':
