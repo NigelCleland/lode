@@ -608,10 +608,11 @@ class Scraper(object):
 
 
     def hit_all_seeds(self):
-        """ Hits all of the relevant Seeds"""
+        """ Hits all of the relevant (recent) Seeds"""
 
         seeds = [x for x in self.CONFIG.keys() if "EMI" in x or "WITS" in x]
-        for s in seeds:
+        act_seeds = [x for x in seeds if "Historic" not in x]
+        for s in act_seeds:
             self.scrape_seed(s)
 
 
