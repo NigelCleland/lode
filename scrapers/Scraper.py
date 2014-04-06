@@ -9,6 +9,7 @@ import simplejson
 import glob
 import itertools
 import shutil
+import subprocess
 
 # The XML parser for frequency keeping.
 from xmlutils.xml2csv import xml2csv
@@ -120,7 +121,7 @@ class Scraper(object):
             if url_seed not in self.completed_seeds:
                 fName = self.download_file(url_seed)
 
-                if cext != '':
+                if cext != '' and fName is not None:
                     fName = self.extract_csvz_file(fName, cext)
 
                 if fName is not None:
@@ -133,7 +134,7 @@ class Scraper(object):
                 else:
                     print "%s was a dead link, continuing full steam" % url_seed
 
-            self.compelted_seeds.append(url_seed)
+            self.completed_seeds.append(url_seed)
 
 
 
@@ -337,7 +338,7 @@ class Scraper(object):
         self.build_url_dates(pattern, ext, rename=rename, date_type=date_type)
 
 
-    def build_file_db(self, file_location, pattern, ext, rename=rename, date_type="Monthly"):
+    def build_file_db(self, file_location, pattern, ext, rename=None, date_type="Monthly"):
 
         all_files = glob.glob(file_location + '/*' + ext)
 
@@ -363,21 +364,68 @@ class Scraper(object):
         return datetime.datetime.strptime(string_rep, "%d %B %Y")
 
 
+    def hit_historic_nodal_demand(self):
+
+        self.get_links(self.url)
+        month_links = [x for x in self.all_links if "demand_pages" in x]
+        all_urls = [os.path.join(self.base_url, 'comitFta',
+                                 x['href']) for x in month_links]
+        return all_urls
+
+
+
     def set_parameters(self, seed):
 
+        # These parameters must be passed
         self.file_location = self.CONFIG[seed]['file_location']
         self.url = self.CONFIG[seed]['url']
         self.pattern = self.CONFIG[seed]['pattern']
-        self.date_type = self.config[seed]['date_type']
-        self.match_type = self.config[seed]['match_type']
+        self.date_type = self.CONFIG[seed]['date_type']
+        self.match_type = self.CONFIG[seed]['match_type']
         self.ext = self.CONFIG[seed]['extension']
-        self.cext = self.CONFIG[seed]['cextension']
-        self.rename = self.CONFIG[seed]['rename']
         self.base_url = self.CONFIG[seed]['base_url']
         self.temp_loc = self.CONFIG[seed]['temp_loc']
 
+        # These parameters are not necessarily required
+        # Will default to either None or an empty string
+        self.cext = self.CONFIG[seed].get('cextension', "")
+        self.rename = self.CONFIG[seed].get('rename', None)
+
+
         if not os.path.isdir(self.file_location):
             os.mkdir(self.file_location)
+
+
+    def scrape_seed(self, seed):
+
+        self.set_parameters(seed)
+
+        print "Preparing to Scrape %s" % seed
+        print "Hitting %s and saving to %s" % (self.url, self.file_location)
+
+        # Need slightly different behaviour due to the structure of the
+        # Historic nodal demand. The page is paginated into a really terrible
+        # structure
+        if seed == "WITS_Historic_Nodal_Demand":
+            for url in self.hit_historic_nodal_demand():
+                self.download_all_from_urls(url, self.pattern,
+                                            self.file_location,
+                                            rename=self.rename,
+                                            date_type=self.date_type,
+                                            ext=self.ext,
+                                            match_type=self.match_type,
+                                            cext=self.cext)
+
+        else:
+            self.download_all_from_urls(self.url, self.pattern,
+                                        self.file_location, rename=self.rename,
+                                        date_type=self.date_type, ext=self.ext,
+                                        match_type=self.match_type,
+                                        cext=self.cext)
+
+        print "Completed Scrape for %s" % seed
+
+
 
 
 if __name__ == '__main__':
