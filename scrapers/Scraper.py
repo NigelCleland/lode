@@ -106,10 +106,42 @@ class Scraper(object):
 
         return save_location
 
-    def download_all_from_urls(self, url, pattern, file_location, rename=None, date_type="Monthly", ext=None, match_type=None, cext=None):
+    def download_all_from_urls(self, url, pattern, file_location, rename=None,
+                               date_type="Monthly", ext=None, match_type=None,
+                               cext=None):
+        """ Hit a URL with a pattern, download all of the links on the page
+        which match the pattern but do not have corresponding dates which
+        already exist in our local file storage.
 
-        self.build_file_db(file_location, pattern, ext, rename=rename, date_type=date_type)
-        self.build_url_db(url, pattern, ext+cext, rename=rename, date_type=date_type, match_type=match_type)
+        Creates two lists of dates, one from the URL, one from the local dir.
+        Uses these to create a unique list of dates which are then
+        selectively scraped.
+
+        Has optional support for decompressing, using 7zip.
+        Has support for parsing XMl to CSV using xml2csv
+
+        Will move the files to the ffinal location.
+        In addition it keeps track of what it has downloaded
+        so that it doesn't accidentally download the same file multiple times
+        even if unique dates for that file exist.
+
+        Parameters:
+        -----------
+        url: A well formed url to be hit
+        pattern: Pattern in the basename to match against
+        self.file_location: File Save Location
+        ext: Filename extension
+        rename: Optional second string incase filenames have changed.
+        date_type: Which parser to use
+        match_type: Match against either the link itself or the name it was
+                    given, recommended to match against the link itself.
+        cext: Compression extension if the file is compressed
+        """
+
+        self.build_file_db(file_location, pattern, ext, rename=rename,
+                           date_type=date_type)
+        self.build_url_db(url, pattern, ext+cext, rename=rename,
+                          date_type=date_type, match_type=match_type)
         self.build_unique_url_dates()
 
         self.completed_seeds = []
@@ -121,11 +153,21 @@ class Scraper(object):
             if url_seed not in self.completed_seeds:
                 fName = self.download_file(url_seed)
 
+
                 if cext != '' and fName is not None:
                     fName = self.extract_csvz_file(fName, cext)
 
+                # Rename the wonky demand files
+                if pattern == "DemandDaily" and fName is not None:
+                    new_fName = os.path.join(self.temp_loc, pattern +
+                                             key.strftime("%Y%m%d") + ".csv")
+                    shutil.move(fName, new_fName)
+                    fName = new_fName
+
+
                 if fName is not None:
-                    final_location = self.move_completed_file(fName, file_location, pattern, rename=rename)
+                    final_location = self.move_completed_file(fName,
+                                         file_location, pattern, rename=rename)
                     print "%s successfully downloaded" % os.path.basename(fName)
 
                     if ext == ".XML":
@@ -137,7 +179,6 @@ class Scraper(object):
             self.completed_seeds.append(url_seed)
 
 
-
     def move_completed_file(self, fName, save_loc, pattern, rename=None):
         """ Moves a file to a new location, has support for doing a final
         renaming of the file.
@@ -147,7 +188,7 @@ class Scraper(object):
         fName: Original file name in the temporary folder
         save_loc: Directory where the file is to be saved
         pattern: The pattern which excludes date information
-        rename: Incase the name procedure has changed...
+        rename: Incase the name procedure has changed.
 
         Returns:
         --------
@@ -175,9 +216,6 @@ class Scraper(object):
         ----------
         fName: XML filename
         tag: XML tag information
-
-        Returns:
-        --------
         """
 
         output_name = fName.replace('.XML', '.csv')
@@ -216,41 +254,96 @@ class Scraper(object):
 
 
     def build_url_dates(self, pattern, ext, rename=None, date_type="Monthly"):
+        """ Once the list of URL links has been populated this function
+        will parse them to datetime objects.
 
+        Parameters:
+        -----------
+        pattern: Pattern in the basename to match against
+        ext: Filename extension
+        rename: Optional second string incase filenames have changed.
+        date_type: Which parser to use
+
+        """
         if pattern == "DemandDaily":
             self.match_demand_urls()
 
         else:
 
             if date_type == "Monthly":
-                self.url_dates = [self.parse_monthly_dates(x['href'], pattern, ext, rename=rename) for x in self.pattern_files]
-                self.url_base = {self.parse_monthly_dates(x['href'], pattern, ext, rename=rename): x['href'] for x in self.pattern_files}
+                self.url_dates = [self.parse_monthly_dates(x['href'], pattern,
+                                        ext, rename=rename) for
+                                        x in self.pattern_files]
+
+                self.url_base = {self.parse_monthly_dates(x['href'], pattern,
+                                     ext, rename=rename): x['href'] for
+                                     x in self.pattern_files}
 
             elif date_type == "Daily":
-                all_dates = [self.parse_daily_dates(x['href'], pattern, ext, rename=rename) for x in self.pattern_files]
+                all_dates = [self.parse_daily_dates(x['href'], pattern, ext,
+                             rename=rename) for x in self.pattern_files]
                 # Flatten out the dates
                 self.url_dates = list(itertools.chain.from_iterable(all_dates))
 
-                # Here, for each unique date in the parsed file (e.g. Jan 2009 has 31 unique dates)
+                # Here, for each unique date in the parsed file
+                # (e.g. Jan 2009 has 31 unique dates)
                 # We match these up against.
-                # Later we filter out duplicate files when we download so this shouldn't
-                # Be too much of an issue (hopefully)
+                # Later we filter out duplicate files when we download so
+                # this shouldn't be too much of an issue (hopefully)
                 self.url_base = {}
                 for x in self.pattern_files:
                     url = x['href']
-                    for date in list(itertools.chain.from_iterable([self.parse_daily_dates(x['href'], pattern, ext, rename=rename)])):
+                    url_dates = [self.parse_daily_dates(x['href'],
+                                        pattern, ext, rename=rename)]
+                    dates = list(itertools.chain.from_iterable(url_dates))
+                    for date in dates:
                         self.url_base[date] = url
 
 
 
 
     def parse_monthly_dates(self, x, pattern, ext, rename=None):
+        """ Take a url or filename string and get a monthly date out of it
+
+        Parameters:
+        -----------
+        x: The string to be parsed
+        pattern: Pattern in the basename to match against
+        ext: Filename extension
+        rename: Optional second string incase filenames have changed.
+
+        Returns:
+        --------
+        datetime object of a monthly date
+
+        """
         datestring = self.scrub_string(x, pattern, ext, rename=rename)
         return datetime.datetime.strptime(datestring, '%Y%m')
 
 
 
-    def parse_daily_dates(self, x, pattern, ext, rename=None, single_mode=False, date_format=None):
+    def parse_daily_dates(self, x, pattern, ext, rename=None,
+                          date_format=None):
+        """ This has two modes of operation, single_mode or multi mode.
+        In single mode  a single datetime object is returned. This is needed
+        to use the datetime objects as dictionary keys
+
+        In multimode a list of dates may be returned. This can then be
+        flattened. This is useful for situations when a combination of
+        monthly and daily files exist.
+
+        Parameters:
+        -----------
+        x: The string to be parsed
+        pattern: Pattern in the basename to match against
+        ext: Filename extension
+        rename: Optional second string incase filenames have changed.
+
+        Returns:
+        --------
+        datetime object or list of datetime objects depending upon single mode
+        """
+
         datestring = self.scrub_string(x, pattern, ext, rename=rename)
 
         if len(datestring) == 6:
@@ -260,13 +353,9 @@ class Scraper(object):
             return dates
 
         elif len(datestring) == 8:
-            if single_mode:
-                return datetime.datetime.strptime(datestring, "%Y%m%d")
-
             return [datetime.datetime.strptime(datestring, "%Y%m%d")]
-
         else:
-            return None
+            return []
 
 
     def scrub_string(self, x, pattern, ext, rename):
@@ -330,21 +419,50 @@ class Scraper(object):
         self.get_links(url)
 
         if match_type == "href":
-           self.pattern_files = [x for x in self.all_links if pattern in os.path.basename(x["href"])]
+           self.pattern_files = [x for x in self.all_links if
+                                  pattern in os.path.basename(x["href"])]
         elif match_type == 'text':
-           self.pattern_files = [x for x in self.all_links if pattern in x.text]
+           self.pattern_files = [x for x in self.all_links if
+                                    pattern in x.text]
 
 
         self.build_url_dates(pattern, ext, rename=rename, date_type=date_type)
 
 
-    def build_file_db(self, file_location, pattern, ext, rename=None, date_type="Monthly"):
+    def build_file_db(self, file_location, pattern, ext, rename=None,
+                      date_type="Monthly"):
+        """ This is the key function which checks which files already exist
+        in the local storage. It works by matching local files against the
+        same pattern as the URL files. The assumption being that no
+        wonky renaming has occurred.
 
+        It returns a list of datetime objects from which we can construct
+        a unique set of datetime objects which we will then parse. This helps
+        to remove a significant amount of redundency.
+
+        Paremeters:
+        -----------
+        file_location: Local directory containing the files
+        pattern: Pattern to match
+        ext: Format of the data
+        rename: In case some human fingers have renamed things
+        date_type: Specifies which parser to use
+
+        Returns:
+        --------
+        self.existing_dates: List of datetime objects of the dates which exist
+                             in the local directory. Prevents downloading
+                             files which already exist.
+        """
+
+        # Note, don't put any similar files in the folder which aren't
+        # meant to be pattern matched over!
         all_files = glob.glob(file_location + '/*' + ext)
 
         if date_type == "Monthly":
             flat_dates = [self.parse_monthly_dates(x, pattern, ext,
-                                               rename=rename) for x in all_files]
+                                                   rename=rename) for
+                          x in all_files]
 
         elif date_type == "Daily":
             all_dates = [self.parse_daily_dates(x, pattern, ext, rename=rename)
@@ -354,29 +472,64 @@ class Scraper(object):
         self.existing_dates = flat_dates
 
     def match_demand_urls(self):
+        """ Parses the demand urls which are in a slightly unique format"""
 
-        self.url_dates = [self.parse_demand_date(x) for x in self.pattern_files]
-        self.url_base = {self.parse_demand_date(x): x['href'] for x in self.pattern_files}
+        self.url_dates = [self.parse_demand_date(x) for
+                          x in self.pattern_files]
+        self.url_base = {self.parse_demand_date(x): x['href'] for
+                         x in self.pattern_files}
 
 
     def parse_demand_date(self, x):
+        """ Nodal Demand is referenced by time of file creation, not
+        the data itself. This is a major pain in the proverbial and
+        requires some different matching behaviour
+        """
         string_rep = " ".join([y for y in x.text.split(' ') if y != ''])
         return datetime.datetime.strptime(string_rep, "%d %B %Y")
 
 
     def hit_historic_nodal_demand(self):
+        """ Historic nodal demand has different structure"""
 
         self.get_links(self.url)
         month_links = [x for x in self.all_links if "demand_pages" in x]
-        all_urls = [os.path.join(self.base_url, 'comitFta',
-                                 x['href']) for x in month_links]
+        all_urls = [os.path.join(self.base_url, 'comitFta', x['href']) for
+                    x in month_links]
         return all_urls
 
 
 
     def set_parameters(self, seed):
+        """ Parse a configuration file for the seed (loaded as a dictionary
+        from JSON) and update a number of parameters. Internally updates
+        class parameters.
 
-        # These parameters must be passed
+        Parameters:
+        -----------
+        seed: A string containing the dictionary key. Must match one of the
+              seeds in the configuration file.
+
+        Returns:
+        --------
+        self.file_location: File Save Location
+        self.url: URL to Scrape
+        self.pattern: Pattern Matching
+        self.date_type: How the Data files are structured (e.g. Daily vs
+                        Monthly, changing parsing behaviour.)
+        self.match_type: Either 'href' or 'text', what to match the pattern on
+        self.ext: file extension
+        self.base_url: urls are parsed as relative for downloading relative to
+                       the base url
+        self.temp_loc: A temporary location to save the data to, for extraction
+                       etc
+        self.cext: optional, additional compression
+        self.rename: optional, some data sources has human fingers on it...
+
+        """
+
+        # These parameters must be passed or KeyErrors exist
+        # They constitute the base of a seed
         self.file_location = self.CONFIG[seed]['file_location']
         self.url = self.CONFIG[seed]['url']
         self.pattern = self.CONFIG[seed]['pattern']
@@ -391,12 +544,40 @@ class Scraper(object):
         self.cext = self.CONFIG[seed].get('cextension', "")
         self.rename = self.CONFIG[seed].get('rename', None)
 
-
+        # Quick check to ensure the directory exists.
         if not os.path.isdir(self.file_location):
             os.mkdir(self.file_location)
 
 
     def scrape_seed(self, seed):
+        """ Using a Seed which refers to a series of configuration values
+        (Loaded from a config.json file) scrape a particular website.
+
+        This class will parse the CONFIG file to generate a series of
+        parameters and then passes these to a separate function to download
+        all of the required files.
+
+        It should work for both WITS and EMI scrapers at the moment using
+        different seed patterns. In addition it will log some of this output
+        to Screen (this needs to be changed to a separate, persistent, logging
+        file).
+
+        Each Seed contains metadata, adding a new Scraper can be a simple
+        case of adding a new Seed in certain situations. This does depend on
+        a site by site basis.
+
+        Parameters:
+        -----------
+        seed: A string containing the dictionary key. Must match one of the
+              seeds in the configuration file.
+
+
+        Returns:
+        --------
+        This function will save data files according to the particular seed
+        values passed. It has support for extraction, XML conversion and
+        hitting multiple URLS.
+        """
 
         self.set_parameters(seed)
 
@@ -426,6 +607,12 @@ class Scraper(object):
         print "Completed Scrape for %s" % seed
 
 
+    def hit_all_seeds(self):
+        """ Hits all of the relevant Seeds"""
+
+        seeds = [x for x in self.CONFIG.keys() if "EMI" in x or "WITS" in x]
+        for s in seeds:
+            self.scrape_seed(s)
 
 
 if __name__ == '__main__':
