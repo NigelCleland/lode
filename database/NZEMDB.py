@@ -1,6 +1,7 @@
 import psycopg2 as pg2
 import simplejson
 import pandas.io.sql as psql
+import pandas as pd
 import os
 import shutil
 import glob
@@ -8,6 +9,11 @@ import sh
 import csv
 import re
 import datetime
+from collections import defaultdict
+from dateutil.parser import parse
+import datetime
+
+from OfferPandas import Frame
 
 # Do some wizardry to get the location of the config file
 file_path = os.path.abspath(__file__)
@@ -197,6 +203,152 @@ class NZEMDB(object):
             for year in self.schemas[master_table]["split_years"]:
                 table = master_table + '_%s' % year
                 print table, self.get_table_size(table)
+
+
+    def query_offer(self, master_table, dates=None, begin_date=None,
+                    end_date=None, companies=None, stations=None, periods=None,
+                    begin_period=None, end_period=None,
+                    grid_points=None, as_offerframe=True):
+
+        # Error checking on the dates and period range consistencies
+        self._check_required_range(dates, begin_date, end_date)
+        self._check_optional_range(periods, begin_period, end_period)
+
+        # Set up the initial SQL queries with dates loaded in
+        all_queries = self.create_date_limited_sql(master_table, dates=dates,
+                                                   begin_date=begin_date,
+                                                   end_date=end_date)
+
+        # Map grid locations based upon which query is being run.
+        grid_map = {"energy_offers": "grid_injection_point",
+                    "generatorreserves_offers": "grid_point",
+                     "ilreserves_offers": "grid_exit_point"}
+
+        # Add all of the other constraints:
+        completed_queries = []
+        for sql in all_queries:
+
+            if periods:
+                sql += self.add_equality_constraint('trading_period', periods)
+
+            elif (begin_period and end_period):
+                sql += self.add_range_constraint('trading_period',
+                                                  begin_period, end_period)
+
+            if companies:
+                sql += self.add_equality_constraint('company', companies)
+
+            if stations:
+                sql += self.add_equality_constraint('station', stations)
+
+            if grid_points:
+
+                sql += self.add_equality_constraint(grid_map[master_table],
+                                                     grid_points)
+
+            # Once all constraints have been added end the SQL statement
+            sql += ';'
+            completed_queries.append(sql)
+
+        # Run all of the required queries, returning the result as a DF
+        all_information = pd.concat((self.query_to_df(q) for
+                                     q in completed_queries),
+                                     ignore_index=True)
+
+        # Optionally modify to an offer frame.
+        if as_offerframe:
+            df = Frame(all_information)
+            return df.modify_frame()
+
+
+        return all_information
+
+
+    def create_date_limited_sql(self, master_table, dates=None,
+                                begin_date=None, end_date=None):
+        all_queries = []
+        # If passing a single date
+        if dates:
+            if type(dates) == str:
+                dt = parse(dates)
+                SQL = """ SELECT * FROM %s_%s WHERE trading_date='%s'""" % (
+                    master_table, dt.year, dt.strftime('%d-%m-%Y'))
+
+                all_queries.append(SQL)
+
+            elif hasattr(dates, '__iter__'):
+                dts = [parse(x, dayfirst=True) for x in dates]
+                # Map the specific dates to the specific years
+                years_dict = defaultdict(list)
+                for dt in dts:
+                    years_dict[dt.year].append(dt)
+
+                for year in years_dict:
+                    strings = "','".join([x.strftime("%d-%m-%Y") for x in years_dict[year]])
+                    date_string = "('%s')" % strings
+                    SQL = """ SELECT * FROM %s_%s WHERE trading_date in %s""" % (master_table, year, date_string)
+
+                    all_queries.append(SQL)
+
+        # Work with Date Ranges
+        else:
+            dt_begin = parse(begin_date, dayfirst=True)
+            dt_end = parse(end_date, dayfirst=True)
+
+            # Generic Year Begin and Year End values
+            ybegin, yend = "01-01-%s", "31-12-%s"
+            for year in range(dt_begin.year, dt_end.year+1):
+                if year == dt_begin.year:
+                    beg = dt_begin.strftime('%d-%m-%Y')
+                else:
+                    beg = ybegin % year
+                if year == dt_end.year:
+                    ed = dt_end.strftime('%d-%m-%Y')
+                else:
+                    ed = yend % year
+
+                SQL = """SELECT * FROM %s_%s WHERE trading_date BETWEEN '%s' AND '%s'""" % (master_table, year, beg, ed)
+                all_queries.append(SQL)
+
+        return all_queries
+
+
+
+    def add_equality_constraint(self, column, values):
+
+        if not hasattr(values, '__iter__'):
+            return self.add_single_selection_constraint(column, values)
+        else:
+            return self.add_multiple_section_constraint(column, values)
+
+
+    def add_range_constraint(self, column, begin, end):
+        return """ AND %s BETWEEN '%s' AND '%s'""" % (column, begin, end)
+
+    def add_single_selection_constraint(self, column, value):
+        return """ AND %s='%s'""" % (column, value)
+
+    def add_multiple_section_constraint(self, column, values):
+        joined = "','".join(values)
+        jvalues = "('%s')" % joined
+        return """ AND %s IN %s""" % (column, jvalues)
+
+    def _check_required_range(self, specific=None, begin=None, end=None):
+        if not specific and not (begin and end):
+            raise ValueError('You must pass some form of date filter')
+
+        if specific and (begin and end):
+            raise ValueError('Cannot pass both a range and specific dates')
+
+        if (begin and not end) or (end and not begin):
+            raise ValueError("Must pass both begin and end for date range")
+
+    def _check_optional_range(self, specific=None, begin=None, end=None):
+        if specific and (begin and end):
+            raise ValueError('Cannot pass both a range and specific')
+
+        if (begin and not end) or (end and not begin):
+            raise ValueError("Must pass both begin and end for ranges")
 
 
 
