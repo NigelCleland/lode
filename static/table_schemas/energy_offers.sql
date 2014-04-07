@@ -21,5 +21,6 @@ Band4_Price double precision,
 Band5_Power double precision,
 Band5_Price double precision,
 Created_Date date,
-Last_Amended_Date date
+Last_Amended_Date date,
+UNIQUE(Company, Grid_Injection_Point, Station, Unit, Trading_Date, Trading_Period)
 );

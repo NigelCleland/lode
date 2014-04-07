@@ -70,8 +70,15 @@ class NZEMDB(object):
 
         try:
             self.execute_and_commit_sql(query)
+        except pg2.IntegrityError as e:
+            print "You're trying to add rows which already exist!"
+            print e
+
         except pg2.ProgrammingError as e:
             print e
+            print "Going to do some permission editing from a local drive"
+            print "You're probably running from an external drive if you see"
+            print "This often"
             fName = os.path.basename(csvfile)
             homeName = os.path.expanduser("~/%s" % fName)
             shutil.copy(csvfile, homeName)
@@ -79,6 +86,9 @@ class NZEMDB(object):
             query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;""" % (tabname, homeName)
             try:
                 self.execute_and_commit_sql(query)
+            except pg2.IntegrityError as e:
+                print "You're trying to add rows which already exist!"
+                print e
             except pg2.DataError as e:
                 print e
                 self.strip_fileendings(homeName)
@@ -106,19 +116,6 @@ class NZEMDB(object):
             return False
 
         return True
-
-
-    # def prepend_csvrow(self, fName, new_header):
-    #     with open(fName, 'rb') as original:
-    #         data = original.read()
-    #         reader = csv.reader(original, delimiter=",")
-    #         data = [row.replace for row in reader]
-
-    #     with open(fName, 'wb') as modified:
-    #         writer = csv.writer(modified, delimiter=',', lineterminator='\n')
-    #         writer.writerow(new_header)
-    #         for row in data:
-    #             writer.writerow(row)
 
     def execute_and_commit_sql(self, sql):
 
@@ -183,7 +180,7 @@ class NZEMDB(object):
 
         allcsv_files = glob.glob(folder + "/*.csv")
         for f in allcsv_files:
-            print f
+            print "Attempting to load %s" % f
             self.insert_from_csv(table, f)
             print "%s succesfully loaded to %s" % (f, table)
 
@@ -193,6 +190,13 @@ class NZEMDB(object):
     def get_table_size(self, table):
         SQL = """ SELECT pg_size_pretty(pg_total_relation_size('%s'));""" % table
         return self.execute_and_fetchall_sql(SQL)
+
+
+    def get_all_table_sizes(self, master_table):
+        if self.schemas[master_table]["split_by_year"]:
+            for year in self.schemas[master_table]["split_years"]:
+                table = master_table + '_%s' % year
+                print table, self.get_table_size(table)
 
 
 
