@@ -297,6 +297,10 @@ class NZEMDB(object):
 
             # Generic Year Begin and Year End values
             ybegin, yend = "01-01-%s", "31-12-%s"
+
+            # Iterate through the years creating a query for each year.
+            # Check if years match a beginning or ending date, otherwise
+            # Use the generic 1st January and 31st December dates
             for year in range(dt_begin.year, dt_end.year+1):
                 if year == dt_begin.year:
                     beg = dt_begin.strftime('%d-%m-%Y')
@@ -308,6 +312,7 @@ class NZEMDB(object):
                     ed = yend % year
 
                 SQL = """SELECT * FROM %s_%s WHERE trading_date BETWEEN '%s' AND '%s'""" % (master_table, year, beg, ed)
+
                 all_queries.append(SQL)
 
         return all_queries
