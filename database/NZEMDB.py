@@ -57,16 +57,17 @@ class NZEMDB(object):
     def insert_from_csv(self, table, csvfile):
         year = self.get_year(csvfile)
         table_year = "%s_%s" % (table, year)
+        table_headers = self.get_column_names(table_year)
+        insert_headers = ",".join([x[0] for x in table_headers if "key" not in x[0]])
+        tabname = "%s(%s)" % (table_year, insert_headers)
 
-        self.check_csv_headers(table_year, csvfile)
+        existing_headers = self.check_csv_headers(csvfile, table_headers)
 
-        with open(csvfile, 'rb') as f:
-            header = f.readline()
+        if existing_headers:
+            query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;""" % (tabname, csvfile)
+        else:
+            query = """COPY %s FROM '%s' DELIMITER ',' CSV;""" % (tabname, csvfile)
 
-
-        tabname = "%s(%s)" % (table_year, header)
-
-        query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;""" % (tabname, csvfile)
         try:
             self.execute_and_commit_sql(query)
         except pg2.ProgrammingError as e:
@@ -96,28 +97,28 @@ class NZEMDB(object):
             for row in data_new:
                 f.write(row)
 
-    def check_csv_headers(self, table, csvfile):
+    def check_csv_headers(self, csvfile, table_headers):
 
         with open(csvfile, 'rb') as f:
             header = f.readline()
 
-        table_headers = self.get_column_names(table)
         if table_headers[5][0] not in header.lower():
-            new_header = [x[0] for x in table_headers if "key" not in x[0]]
-            self.prepend_csvrow(csvfile, new_header)
+            return False
+
+        return True
 
 
-    def prepend_csvrow(self, fName, new_header):
-        with open(fName, 'rb') as original:
-            data = original.read()
-            reader = csv.reader(original, delimiter=",")
-            data = [row.replace for row in reader]
+    # def prepend_csvrow(self, fName, new_header):
+    #     with open(fName, 'rb') as original:
+    #         data = original.read()
+    #         reader = csv.reader(original, delimiter=",")
+    #         data = [row.replace for row in reader]
 
-        with open(fName, 'wb') as modified:
-            writer = csv.writer(modified, delimiter=',', lineterminator='\n')
-            writer.writerow(new_header)
-            for row in data:
-                writer.writerow(row)
+    #     with open(fName, 'wb') as modified:
+    #         writer = csv.writer(modified, delimiter=',', lineterminator='\n')
+    #         writer.writerow(new_header)
+    #         for row in data:
+    #             writer.writerow(row)
 
     def execute_and_commit_sql(self, sql):
 
