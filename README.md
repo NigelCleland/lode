@@ -1,5 +1,34 @@
-nzem-datastore
-==============
+# Lode
+
+A single repository for setting up data analytical toolkits for
+the New Zealand Electricity Market using Python.
+
+Lode handles the Scraping and setting up some sharded Databases
+as well as providing a simplified query interface for querying
+relevant data.
+
+## Implemented Features
+
+### Scrapers:
+
+* WITS
+* EMI
+* COMIT (courtesy djhume)
+* ASX (courtesy djhume)
+
+### Databases with query interface:
+
+* Energy Offers
+* IL Offers
+* Generator Reserve Offers
+
+### Features in Planning:
+
+The list of current features being worked on can be found at [Github Enhancement List](https://github.com/NigelCleland/lode/issues?labels=enhancement&page=1&state=open)
+
+
+
+# Problem Statement
 
 ## The problem at hand:
 
@@ -112,18 +141,6 @@ This structure would stop the need to rerun each of the munging steps at each
 iteration. The caveat is that we are likely to be working on desktop
 machines which can have limited RAM.
 
-
-## Completed Work:
-
-[EMIScraper](https://github.com/NigelCleland/nzem-datastore/blob/develop/scrapers/EMIScraper.py)
-A class to make scraping the EMI dashboard a much much simpler occurrence.
-Has support for synchronising two folders from scraping HTTPS
-
-## Work To Transfer:
-
-[WITSScraper](https://github.com/NigelCleland/nzem-datastore/blob/develop/scrapers/WITSScraper.py)
-A class to make scraping WITS a more pleasant experience. The functionality
-is written but I need to encapsulate it in a class
 
 ## Work To Do:
 
