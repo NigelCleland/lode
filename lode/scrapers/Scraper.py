@@ -201,8 +201,8 @@ class Scraper(object):
 
         # Correct the basename due to the fucking slash difference
         # This should ensures the basename bit works...
-        fName = fName.replace("%2F", "/")
-        basename = os.path.basename(fName)
+        fName_repl = fName.replace("%2F", "/")
+        basename = os.path.basename(fName_repl)
         end_location = os.path.join(save_loc, basename)
 
         if rename:
