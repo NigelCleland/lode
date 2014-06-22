@@ -373,6 +373,11 @@ class Scraper(object):
         --------
         datestring: A string which can be parsed
         """
+
+        # We're going to manipulate x with the unicode slash character
+        # Overwriting the variable which is icky though.
+        x = x.replace('%2F', '/')
+
         base_str = os.path.basename(x)
         if ext == '.gdx':
             # GDX files are named weird. It's a real issue and a major pain.
