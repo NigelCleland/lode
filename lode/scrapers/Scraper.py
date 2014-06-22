@@ -171,7 +171,10 @@ class Scraper(object):
                     print "%s successfully downloaded" % os.path.basename(fName)
 
                     if ext == ".XML":
-                        self.parse_xml_to_csv(final_location)
+                        try:
+                            self.parse_xml_to_csv(final_location)
+                        except:
+                            print "Encountered a parsing error, steamrolling"
 
                 else:
                     print "%s was a dead link, continuing full steam" % url_seed
@@ -195,8 +198,13 @@ class Scraper(object):
         end_location: Location of the saved file
 
         """
+
+        # Correct the basename due to the fucking slash difference
+        # This should ensures the basename bit works...
+        fName = fName.replace("%2F", "/")
         basename = os.path.basename(fName)
         end_location = os.path.join(save_loc, basename)
+
         if rename:
             end_location = end_location.replace(rename, pattern)
 
