@@ -212,6 +212,16 @@
                               "base_url": "http://www.emi.ea.govt.nz/",
                               "temp_loc": "/path/to/temporary_data"},
 
+     "EMI_Binding_Constraints":  {"pattern": "Binding_constraints",
+                              "url": "http://www.emi.ea.govt.nz/Datasets/Browse?directory=%2FBinding_constraints&parentDirectory=%2FDatasets%2FWholesale%2FFinal_pricing",
+                              "file_location": "/path/to/date_storage/folder/Hedge_Constracts",
+                              "date_type": "Daily",
+                              "match_type": "href",
+                              "rename": "",
+                              "extension": ".pdf",
+                              "base_url": "http://www.emi.ea.govt.nz/",
+                              "temp_loc": "/path/to/temporary_data"},
+
     "offer_database": {"database_name": "offer_database",
                        "database_user": "ncle778",
                        "database_pass": "postgres",
