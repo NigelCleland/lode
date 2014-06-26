@@ -307,6 +307,15 @@ class Scraper(object):
                     for date in dates:
                         self.url_base[date] = url
 
+            elif date_type == "Yearly":
+                self.url_dates = [self.parse_yearly_dates(x["href"], pattern,
+                                  ext, rename=rename) for x in
+                                  self.pattern_files]
+
+                self.url_base = {self.parse_yearly_dates(x['href'], pattern,
+                                 ext, rename=rename): x['href'] for
+                                 x in self.pattern_files}
+
 
 
 
@@ -327,6 +336,15 @@ class Scraper(object):
         """
         datestring = self.scrub_string(x, pattern, ext, rename=rename)
         return datetime.datetime.strptime(datestring, '%Y%m')
+
+
+    def parse_yearly_dates(self, x, pattern, ext, rename=None):
+        """ Take a url or filename string to get a monthly date
+
+        """
+
+        datestring = self.scrub_string(x, pattern, ext, rename=rename)
+        return datetime.datetime.strptime(datestring, "%Y")
 
 
 
@@ -474,13 +492,16 @@ class Scraper(object):
 
         if date_type == "Monthly":
             flat_dates = [self.parse_monthly_dates(x, pattern, ext,
-                                                   rename=rename) for
-                          x in all_files]
+                           rename=rename) for x in all_files]
 
         elif date_type == "Daily":
             all_dates = [self.parse_daily_dates(x, pattern, ext, rename=rename)
                      for x in all_files]
             flat_dates = list(itertools.chain.from_iterable(all_dates))
+
+        elif date_type == "Yearly":
+            flat_dates = [self.parse_yearly_dates(x, pattern, ext,
+                          rename=rename) for x in all_files]
 
         self.existing_dates = flat_dates
 
