@@ -12,7 +12,8 @@ class TempScraper(object):
                               "Christchurch-Canterbury": "Christchurch%2C+Canterbury%2C+New+Zealand",
                               "Kelburn-Wellington": "Kelburn%2C+Wellington%2C+New+Zealand",
                               "Napier-HawkesBay": "Napier+South%2C+Hawke's+Bay%2C+New+Zealand",
-                              "PalmerstonNorth-Manawatu": "Palmerston+North+-+Massey+University%2C+Wellington%2C+New+Zealand"}
+                              "PalmerstonNorth-Manawatu": "Palmerston+North+-+Massey+University%2C+Wellington%2C+New+Zealand",
+                              "Dunedin-Otago": "Janefield%2C+Otago%2C+New+Zealand"}
 
     def query_page(self, location, date):
         try:
