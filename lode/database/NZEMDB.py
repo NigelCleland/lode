@@ -61,20 +61,7 @@ class NZEMDB(object):
         return date.strftime("%Y")
 
 
-    def insert_from_csv(self, table, csvfile):
-        year = self.get_year(csvfile)
-        table_year = "%s_%s" % (table, year)
-        table_headers = self.get_column_names(table_year)
-        insert_headers = ",".join([x[0] for x in table_headers if "key" not in x[0]])
-        tabname = "%s(%s)" % (table_year, insert_headers)
-
-        existing_headers = self.check_csv_headers(csvfile, table_headers)
-
-        if existing_headers:
-            query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;""" % (tabname, csvfile)
-        else:
-            query = """COPY %s FROM '%s' DELIMITER ',' CSV;""" % (tabname, csvfile)
-
+    def insert_to_database(self, query, csvfile, tabname):
         try:
             self.execute_and_commit_sql(query)
         except pg2.IntegrityError as e:
@@ -103,6 +90,33 @@ class NZEMDB(object):
 
             os.remove(homeName)
 
+
+    def insert_from_csv(self, table, csvfile):
+
+        # Check the Schemas for the split year:
+        if self.schemas[table]['split_by_year']:
+            year = self.get_year(csvfile)
+            table_name = "%s_%s" % (table, year)
+        else:
+            table_name = table
+        # year = self.get_year(csvfile)
+        # table_year = "%s_%s" % (table, year)
+        #table_headers = self.get_column_names(table_year)
+
+        table_headers = self.get_column_names(table_name)
+        insert_headers = ",".join([x[0] for x in table_headers if "key" not in x[0]])
+        tabname = "%s(%s)" % (table_name, insert_headers)
+
+        existing_headers = self.check_csv_headers(csvfile, table_headers)
+
+        if existing_headers:
+            query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;""" % (tabname, csvfile)
+        else:
+            query = """COPY %s FROM '%s' DELIMITER ',' CSV;""" % (tabname, csvfile)
+
+        self.insert_to_database(query, csvfile, tabname)
+
+
     def strip_fileendings(self, fName):
         print "Attempting to strip the shitty endings"
         with open(fName, 'rb') as f:
@@ -119,7 +133,7 @@ class NZEMDB(object):
         with open(csvfile, 'rb') as f:
             header = f.readline()
 
-        if table_headers[3][0] not in header.lower():
+        if table_headers[1][0] not in header.lower():
             return False
 
         return True
