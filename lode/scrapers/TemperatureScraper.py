@@ -8,7 +8,11 @@ class TempScraper(object):
     def __init__(self):
         self.key_url = "http://www.weatherbase.com/weather/weatherhourly.php3?s=596460&date=%s&cityname=%s&units=metric"
 
-        self.location_dict = {"Newmarket-Auckland" : "Auckland+-+Newmarket%2C+Auckland%2C+New+Zealand"}
+        self.location_dict = {"Newmarket-Auckland" : "Auckland+-+Newmarket%2C+Auckland%2C+New+Zealand",
+                              "Christchurch-Canterbury": "Christchurch%2C+Canterbury%2C+New+Zealand",
+                              "Kelburn-Wellington": "Kelburn%2C+Wellington%2C+New+Zealand",
+                              "Napier-HawkesBay": "Napier+South%2C+Hawke's+Bay%2C+New+Zealand",
+                              "PalmerstonNorth-Manawatu": "Palmerston+North+-+Massey+University%2C+Wellington%2C+New+Zealand"}
 
     def query_page(self, location, date):
         try:
