@@ -118,7 +118,7 @@ class NZEMDB(object):
         with open(csvfile, 'rb') as f:
             header = f.readline()
 
-        if table_headers[5][0] not in header.lower():
+        if table_headers[3][0] not in header.lower():
             return False
 
         return True
