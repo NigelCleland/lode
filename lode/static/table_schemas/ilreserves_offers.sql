@@ -1,0 +1,25 @@
+CREATE TABLE IF NOT EXISTS ilreserves_offers_%s
+(
+ilreserves_offer_key serial primary key,
+Company varchar(4),
+Grid_Exit_Point varchar(7),
+Trading_Date date,
+Trading_Period int,
+int_load_6s varchar(1),
+int_load_60s varchar(1),
+Band1_6s_price double precision,
+Band1_6s_max double precision,
+Band1_60s_price double precision,
+Band1_60s_max double precision,
+Band2_6s_price double precision,
+Band2_6s_max double precision,
+Band2_60s_price double precision,
+Band2_60s_max double precision,
+Band3_6s_price double precision,
+Band3_6s_max double precision,
+Band3_60s_price double precision,
+Band3_60s_max double precision,
+Created_Date date,
+Last_Amended_Date date,
+UNIQUE(Company,Grid_Exit_Point,Trading_Date,Trading_Period)
+);
