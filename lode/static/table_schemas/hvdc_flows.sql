@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS hvdc_flows_%s
 (
-hvdc_flows_key serial primary key double precision,
-POC varchar(7) double precision,
-NWK_Code varchar(4) double precision,
-GENERATION_TYPE varchar(2) double precision,
+hvdc_flows_key serial primary key,
+POC varchar(7),
+NWK_Code varchar(4),
+GENERATION_TYPE varchar(2),
 TRADER varchar(4),
 UNIT_MEASURE varchar(3),
 FLOW_DIRECTION varchar(1),
@@ -59,5 +59,5 @@ TP47 double precision,
 TP48 double precision,
 TP49 double precision,
 TP50 double precision,
-UNIQUE(POC, GENERATION_TYPE, TRADER, TRADING_DATE)
+UNIQUE(POC, GENERATION_TYPE, FLOW_DIRECTION, TRADER, TRADING_DATE)
 );

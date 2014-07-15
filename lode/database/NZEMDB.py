@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import psycopg2 as pg2
 import simplejson
 import pandas.io.sql as psql
@@ -82,9 +83,9 @@ class NZEMDB(object):
 
         except pg2.ProgrammingError as e:
             print e
-            print "Going to do some permission editing from a local drive"
-            print "You're probably running from an external drive if you see"
-            print "This often"
+            #print "Going to do some permission editing from a local drive"
+            #print "You're probably running from an external drive if you see"
+            #print "This often"
             fName = os.path.basename(csvfile)
             homeName = os.path.expanduser("~/%s" % fName)
             shutil.copy(csvfile, homeName)
@@ -182,6 +183,10 @@ class NZEMDB(object):
         return df
 
 
+    def columnise_trading_periods(self, df):
+        pass
+
+
     def insert_many_csv(self, table, folder):
 
         allcsv_files = glob.glob(folder + "/*.csv")
@@ -189,6 +194,9 @@ class NZEMDB(object):
             print "Attempting to load %s" % f
             self.insert_from_csv(table, f)
             print "%s succesfully loaded to %s" % (f, table)
+
+    def update_table(self, table):
+        pass
 
     def list_all_tables(self):
         return self.execute_and_fetchall_sql("SELECT * FROM pg_catalog.pg_tables")

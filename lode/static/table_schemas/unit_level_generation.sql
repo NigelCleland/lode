@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS unit_level_generation_%s
 (
 unit_level_generation_key serial primary key,
 POC varchar(7),
-Unit_Code varchar(2),
+Unit_Code varchar(4),
 Participant_Code varchar(4),
 Gen_Measure varchar(3),
 Flow_Direction varchar(1),
