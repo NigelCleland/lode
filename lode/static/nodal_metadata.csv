@@ -1,0 +1,465 @@
+Node,Is Injection,Is Hvdc,Bus Id,Location Name,Load Area,Island Name,Region,Generation Type,Company Name
+HLY2201 HLY0,T,F,HLY2201,HLY,Waikato Taupo King Country,North Island,Waikato,Coal,Genesis Energy
+HLY2201 HLY1,T,F,HLY2201,HLY,Waikato Taupo King Country,North Island,Waikato,Coal,Genesis Energy
+HLY2201 HLY2,T,F,HLY2201,HLY,Waikato Taupo King Country,North Island,Waikato,Coal,Genesis Energy
+HLY2201 HLY3,T,F,HLY2201,HLY,Waikato Taupo King Country,North Island,Waikato,Coal,Genesis Energy
+HLY2201 HLY4,T,F,HLY2201,HLY,Waikato Taupo King Country,North Island,Waikato,Coal,Genesis Energy
+GLN0331 GLN0,T,F,GLN0331,GLN,Auckland,North Island,Auckland,Cogen,NZ Steel
+GLN0332 GLN0,T,F,GLN0332,GLN,Auckland,North Island,Auckland,Cogen,NZ Steel
+HWA1101 WAA0,T,F,HWA1101,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Cogen,
+HWA1101 WAA1,T,F,HWA1101,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Cogen,
+HWA1101 WAA2,T,F,HWA1101,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Cogen,
+HWA1102 WAA0,T,F,HWA1102,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Cogen,
+HWA1102 WAA1,T,F,HWA1102,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Cogen,
+HWA1102 WAA2,T,F,HWA1102,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Cogen,
+KAW0112 ONU0,T,F,KAW0112,KAW,Bay of Plenty,North Island,Bay Of Plenty,Cogen,Norske Skog
+KIN0112 ECZ0,T,F,KIN0112,KIN,Bay of Plenty,North Island,Bay Of Plenty,Cogen,
+KIN0112 KIN0,T,F,KIN0112,KIN,Bay of Plenty,North Island,Bay Of Plenty,Cogen,
+KIN0112 MCY0,T,F,KIN0112,KIN,Bay of Plenty,North Island,Bay Of Plenty,Cogen,
+OTA0221,F,F,OTA0221,OTA,Auckland,North Island,Auckland,Cogen,
+TMU1101 ANC0,T,F,TMU1101,TMU,Waikato Taupo King Country,North Island,Waikato,Cogen,
+TMU1101 ANC9,T,F,TMU1101,TMU,Waikato Taupo King Country,North Island,Waikato,Cogen,
+TWH0331 TRC1,T,F,TWH0331,TWH,Waikato Taupo King Country,North Island,Waikato,Cogen,Contact Energy
+WHI2201 WHI0,T,F,WHI2201,WHI,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Diesel,Contact Energy
+WHI2201 WHI1,T,F,WHI2201,WHI,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Diesel,Contact Energy
+WHI2201 WHI2,T,F,WHI2201,WHI,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Diesel,Contact Energy
+WHI2201 WHI3,T,F,WHI2201,WHI,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Diesel,Contact Energy
+HLY2201 HLY5,T,F,HLY2201,HLY,Waikato Taupo King Country,North Island,Waikato,Gas,Genesis Energy
+HLY2201 HLY6,T,F,HLY2201,HLY,Waikato Taupo King Country,North Island,Waikato,Gas,Genesis Energy
+KPA1101 KPI1,T,F,KPA1101,KPA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,
+NPL1101 NPL0,T,F,NPL1101,NPL,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,
+NPL1101 NPL1,T,F,NPL1101,NPL,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,
+NPL1101 NPL2,T,F,NPL1101,NPL,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,
+NPL2201 NPL0,T,F,NPL2201,NPL,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,
+NPL2201 NPL3,T,F,NPL2201,NPL,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,
+NPL2201 NPL4,T,F,NPL2201,NPL,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,
+NPL2201 NPL5,T,F,NPL2201,NPL,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,
+OTA1101 OTG0,T,F,OTA1101,OTA,Auckland,North Island,Auckland,Gas,Contact Energy
+OTA1101 OTG1,T,F,OTA1101,OTA,Auckland,North Island,Auckland,Gas,Contact Energy
+OTA1102 OTG0,T,F,OTA1102,OTA,Auckland,North Island,Auckland,Gas,Contact Energy
+OTA1102 OTG4,T,F,OTA1102,OTA,Auckland,North Island,Auckland,Gas,Contact Energy
+OTA2202 OTC0,T,F,OTA2202,OTA,Auckland,North Island,Auckland,Gas,Contact Energy
+SFD2201 SFD0,T,F,SFD2201,SFD,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,Contact Energy
+SFD2201 SFD1,T,F,SFD2201,SFD,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,Contact Energy
+SFD2201 SFD2,T,F,SFD2201,SFD,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,Contact Energy
+SFD2201 SFD21,T,F,SFD2201,SFD,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,Contact Energy
+SFD2201 SFD22,T,F,SFD2201,SFD,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,Contact Energy
+SFD2201 SFD3,T,F,SFD2201,SFD,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,Contact Energy
+SFD2201 SFD4,T,F,SFD2201,SFD,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,Contact Energy
+SFD2201 SPL0,T,F,SFD2201,SFD,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,Contact Energy
+SFD2201 SPL9,T,F,SFD2201,SFD,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Gas,Contact Energy
+SWN2201 SWN0,T,F,SWN2201,SWN,Auckland,North Island,Auckland,Gas,Mighty River
+SWN2201 SWN5,T,F,SWN2201,SWN,Auckland,North Island,Auckland,Gas,Mighty River
+KAW1101 KAG0,T,F,KAW1101,KAW,Bay of Plenty,North Island,Bay Of Plenty,Geothermal,Norske Skog
+KOE0331 NGA0,T,F,KOE0331,KOE,Northland,North Island,North Isthmus,Geothermal,Top Energy
+NAP2201 NAP0,T,F,NAP2201,NAP,Waikato Taupo King Country,North Island,Waikato,Geothermal,Mighty River
+NAP2202 NTM0,T,F,NAP2202,NAP,Waikato Taupo King Country,North Island,Waikato,Geothermal,Mighty River
+OKI2201 OKI0,T,F,OKI2201,OKI,Waikato Taupo King Country,North Island,Waikato,Geothermal,Contact Energy
+PPI2201 MCN0,T,F,PPI2201,PPI,Waikato Taupo King Country,North Island,Waikato,Geothermal,Contact Energy
+PPI2201 PPI0,T,F,PPI2201,PPI,Waikato Taupo King Country,North Island,Waikato,Geothermal,Contact Energy
+WKM2201 MOK0,T,F,WKM2201,WKM,Waikato Taupo King Country,North Island,Waikato,Geothermal,Mighty River
+WRK0331 RKA0,T,F,WRK0331,WRK,Waikato Taupo King Country,North Island,Central,Geothermal,Mighty River
+WRK0331 TAA0,T,F,WRK0331,WRK,Waikato Taupo King Country,North Island,Central,Geothermal,Contact Energy
+WRK2201 WRK0,T,F,WRK2201,WRK,Waikato Taupo King Country,North Island,Central,Geothermal,Contact Energy
+BEN0161 P1N,F,T,BEN0161,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN0161 P1S,T,T,BEN0161,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN0162 PAN,T,F,BEN0162,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN0162 PAS,T,F,BEN0162,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN0162 XAN,T,F,BEN0162,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN0162 XAS,T,F,BEN0162,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN0163 PBN,T,F,BEN0163,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN0163 PBS,T,F,BEN0163,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN0163 XBN,T,F,BEN0163,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN0163 XBS,T,F,BEN0163,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN2201 P1N,T,F,BEN2201,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN2201 P2N,F,T,BEN2201,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN2201 P2S,T,T,BEN2201,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN2201 TPE,T,F,BEN2201,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN2201 TPV,T,F,BEN2201,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN3502 P2N,F,T,BEN3502,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN3502 P2S,T,T,BEN3502,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN3503 P3N,F,T,BEN3503,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+BEN3503 P3S,T,T,BEN3503,BEN,Southland Otago,South Island,South Canterbury,HVDC,
+DCN3501,T,T,DCN3501,DC North End,Wellington,North Island,Wellington,HVDC,
+DCS3501,T,T,DCS3501,DC South End,Canterbury,South Island,South Canterbury,HVDC,
+HAY1101 P1N,T,T,HAY1101,HAY,Wellington,North Island,Wellington,HVDC,
+HAY1101 P1S,F,T,HAY1101,HAY,Wellington,North Island,Wellington,hVDC,
+HAY1101 TPV,T,F,HAY1101,HAY,Wellington,North Island,Wellington,HVDC,
+HAY2201 P2N,T,T,HAY2201,HAY,Wellington,North Island,Wellington,HVDC,
+HAY2201 P2S,F,T,HAY2201,HAY,Wellington,North Island,Wellington,HVDC,
+HAY2201 TPE,T,F,HAY2201,HAY,Wellington,North Island,Wellington,HVDC,
+HAY2201 TPV,T,F,HAY2201,HAY,Wellington,North Island,Wellington,HVDC,
+HAY3502 P2N,T,T,HAY3502,HAY,Wellington,North Island,Waikato,HVDC,
+HAY3502 P2S,F,T,HAY3502,HAY,Wellington,North Island,Waikato,HVDC,
+HAY3503 P3N,T,T,HAY3503,HAY,Wellington,North Island,Wellington,HVDC,
+HAY3503 P3S,F,T,HAY3503,HAY,Wellington,North Island,Wellington,HVDC,
+ABY0111 OPU0,T,F,ABY0111,ABY,Canterbury,South Island,South Canterbury,Hydro,
+AHA0111 AHA0,T,F,AHA0111,Arahura,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Hydro,Trustpower
+ARA2201 ARA0,T,F,ARA2201,ARA,Waikato Taupo King Country,North Island,Waikato,Hydro,Mighty River
+ARG1101 BRR0,T,F,ARG1101,ARG,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Hydro,
+ARI1101 ARI0,T,F,ARI1101,ARI,Waikato Taupo King Country,North Island,Waikato,Hydro,Mighty River
+ARI1102 ARI0,T,F,ARI1102,ARI,Waikato Taupo King Country,North Island,Waikato,Hydro,Mighty River
+ASB0661 HBK0,T,F,ASB0661,ASB,Canterbury,South Island,Canterbury,Hydro,Trustpower
+ATI2201 ATI0,T,F,ATI2201,ATI,Waikato Taupo King Country,North Island,Bay Of Plenty,Hydro,Mighty River
+AVI2201 AVI0,T,F,AVI2201,AVI,Southland Otago,South Island,South Canterbury,Hydro,Meridian Energy
+BEN0161 BEN0,T,F,BEN0161,BEN,Southland Otago,South Island,South Canterbury,Hydro,Meridian Energy
+BEN0162 BEN0,T,F,BEN0162,BEN,Southland Otago,South Island,South Canterbury,Hydro,Meridian Energy
+BEN0163 BEN0,T,F,BEN0163,BEN,Southland Otago,South Island,South Canterbury,Hydro,Meridian Energy
+BEN2202 BEN0,T,F,BEN2202,BEN,Southland Otago,South Island,South Canterbury,Hydro,Meridian Energy
+BLN0331,F,F,BLN0331,BLN,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Hydro,
+BWK1101 WPI0,T,F,BWK1101,BWK,Southland Otago,South Island,Otago/Southland,Hydro,
+CML0331 TVT0,T,F,CML0331,CML,Southland Otago,South Island,Otago/Southland,Hydro,
+COB0661 COB0,T,F,COB0661,COB,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Hydro,Trustpower
+COB0661 COB9,T,F,COB0661,COB,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Hydro,Trustpower
+COL0661 COL0,T,F,COL0661,COL,West Coast Nelson Marlborough,South Island,Canterbury,Hydro,Trustpower
+CYD0331 TVT0,T,F,CYD0331,CYD,Southland Otago,South Island,Otago/Southland,Hydro,Contact Energy
+CYD2201 CYD0,T,F,CYD2201,CYD,Southland Otago,South Island,Otago/Southland,Hydro,Contact Energy
+DOB0331 ALD0,T,F,DOB0331,DOB,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Hydro,Trustpower
+GYM0661 KUM0,T,F,GYM0661,GYM,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Hydro,Trustpower
+HAM0331 TRC0,T,F,HAM0331,HAM,Waikato Taupo King Country,North Island,Waikato,Hydro,
+HBK0661 HBK0,F,F,HBK0661,Highbank,Canterbury,South Island,Canterbury,Hydro,Trustpower
+HTI0331 ANA0,T,F,HTI0331,HTI,Waikato Taupo King Country,North Island,Waikato,Hydro,
+HWA1101 PTA0,T,F,HWA1101,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Hydro,Trustpower
+HWA1101 PTA1,T,F,HWA1101,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Hydro,Trustpower
+HWA1101 PTA2,T,F,HWA1101,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Hydro,Trustpower
+HWA1101 PTA3,T,F,HWA1101,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Hydro,Trustpower
+HWB0331 WPI0,T,F,HWB0331,HWB,Southland Otago,South Island,Otago/Southland,Hydro,
+KPO1101 KPO0,T,F,KPO1101,KPO,Waikato Taupo King Country,North Island,Waikato,Hydro,Mighty River
+KUM0661 KUM0,T,F,KUM0661,KUM,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Hydro,
+MAN2201 MAN0,T,F,MAN2201,MAN,Southland Otago,South Island,Otago/Southland,Hydro,Meridian Energy
+MAN2201 MAN9,T,F,MAN2201,MAN,Southland Otago,South Island,Otago/Southland,Hydro,Meridian Energy
+MAT1101 ANI0,T,F,MAT1101,MAT,Bay of Plenty,North Island,Bay Of Plenty,Hydro,Trustpower
+MAT1101 ANI7,T,F,MAT1101,MAT,Bay of Plenty,North Island,Bay Of Plenty,Hydro,Trustpower
+MAT1101 MAT0,T,F,MAT1101,MAT,Bay of Plenty,North Island,Bay Of Plenty,Hydro,Trustpower
+MAT1102 MAT0,T,F,MAT1102,MAT,Bay of Plenty,North Island,Bay Of Plenty,Hydro,Trustpower
+MHO0331 MGO0,T,F,MHO0331,MHO,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Hydro,Trustpower
+MHO0331 MHO0,T,F,MHO0331,MHO,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Hydro,Trustpower
+MTI2201,F,F,MTI2201,MTI,Waikato Taupo King Country,North Island,Waikato,Hydro,
+MTI2201 MTI0,T,F,MTI2201,MTI,Waikato Taupo King Country,North Island,Waikato,Hydro,Mighty River
+NMA0331 MON0,T,F,NMA0331,NMA,Southland Otago,South Island,Otago/Southland,Hydro,Trustpower
+NSY0331 NSY0,T,F,NSY0331,NSY,Southland Otago,South Island,Otago/Southland,Hydro,
+NSY0331 PAE0,T,F,NSY0331,NSY,Southland Otago,South Island,Otago/Southland,Hydro,
+OHA2201 OHA0,T,F,OHA2201,OHA,Southland Otago,South Island,South Canterbury,Hydro,Meridian Energy
+OHA2201 TPV,T,F,OHA2201,OHA,Southland Otago,South Island,South Canterbury,Hydro,Meridian Energy
+OHB2201 OHB0,T,F,OHB2201,OHB,Southland Otago,South Island,South Canterbury,Hydro,Meridian Energy
+OHC2201 OHC0,T,F,OHC2201,OHC,Southland Otago,South Island,South Canterbury,Hydro,Meridian Energy
+OHK2201 OHK0,T,F,OHK2201,OHK,Bay of Plenty,North Island,Waikato,Hydro,Mighty River
+ONG0331 KUR0,T,F,ONG0331,ONG,Waikato Taupo King Country,North Island,Central,Hydro,Trustpower
+ROT1101 WHE0,T,F,ROT1101,ROT,Bay of Plenty,North Island,Bay Of Plenty,Hydro,Trustpower
+ROX1101 ROX0,T,F,ROX1101,ROX,Southland Otago,South Island,Otago/Southland,Hydro,Contact Energy
+ROX2201 ROX0,T,F,ROX2201,ROX,Southland Otago,South Island,Otago/Southland,Hydro,Contact Energy
+RPO2201 RPO0,T,F,RPO2201,RPO,Waikato Taupo King Country,North Island,Central,Hydro,Genesis Energy
+TGA0331 KMI0,T,F,TGA0331,TGA,Bay of Plenty,North Island,Bay Of Plenty,Hydro,Trustpower
+TGA0331 LMD0,T,F,TGA0331,TGA,Bay of Plenty,North Island,Bay Of Plenty,Hydro,Trustpower
+TGA0331 LMG0,T,F,TGA0331,TGA,Bay of Plenty,North Island,Bay Of Plenty,Hydro,Trustpower
+TGA0331 RHI0,T,F,TGA0331,TGA,Bay of Plenty,North Island,Bay Of Plenty,Hydro,Trustpower
+TGA0331 TGA0,T,F,TGA0331,TGA,Bay of Plenty,North Island,Bay Of Plenty,Hydro,Trustpower
+TKA0111 TKA0,T,F,TKA0111,TKA,Canterbury,South Island,South Canterbury,Hydro,Genesis Energy
+TKA0111 TKA1,T,F,TKA0111,TKA,Canterbury,South Island,South Canterbury,Hydro,Genesis Energy
+TKA0111 TKA9,T,F,TKA0111,TKA,Canterbury,South Island,South Canterbury,Hydro,Genesis Energy
+TKB2201 TKB0,T,F,TKB2201,TKB,Canterbury,South Island,South Canterbury,Hydro,Genesis Energy
+TKB2201 TKB1,T,F,TKB2201,TKB,Canterbury,South Island,South Canterbury,Hydro,Genesis Energy
+TKB2201 TKC0,T,F,TKB2201,TKB,Canterbury,South Island,South Canterbury,Hydro,Genesis Energy
+TKU0331 KUR0,T,F,TKU0331,TKU,Waikato Taupo King Country,North Island,Central,Hydro,Genesis Energy
+TKU2201 TKU0,T,F,TKU2201,TKU,Waikato Taupo King Country,North Island,Central,Hydro,Genesis Energy
+TUI1101 KTW0,T,F,TUI1101,TUI,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Hydro,Genesis Energy
+TUI1101 PRI0,T,F,TUI1101,TUI,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Hydro,Genesis Energy
+TUI1101 TUI0,T,F,TUI1101,TUI,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Hydro,Genesis Energy
+WKM2201 WKM0,T,F,WKM2201,WKM,Waikato Taupo King Country,North Island,Waikato,Hydro,Mighty River
+WPA2201 WPA0,T,F,WPA2201,WPA,Waikato Taupo King Country,North Island,Waikato,Hydro,Mighty River
+WRA0111 WRA0,T,F,WRA0111,WRA,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Hydro,Trustpower
+WTK0111 WTK0,T,F,WTK0111,WTK,Southland Otago,South Island,South Canterbury,Hydro,Meridian Energy
+ABY0111,F,F,ABY0111,ABY,Canterbury,South Island,South Canterbury,Load,
+ADD0111,F,F,ADD0111,ADD,Canterbury,South Island,Canterbury,Load,
+ADD0661,F,F,ADD0661,ADD,Canterbury,South Island,Canterbury,Load,
+AHA0111,F,F,AHA0111,Arahura,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+ALB0331,F,F,ALB0331,ALB,Northland,North Island,North Isthmus,Load,
+ALB1101,F,F,ALB1101,ALB,Northland,North Island,North Isthmus,Load,
+ANA0111,F,F,ANA0111,Arohena,Waikato Taupo King Country,North Island,Waikato,Load,
+APS0111,F,F,APS0111,APS,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+ARG1101,F,F,ARG1101,ARG,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+ARI0501,F,F,ARI0501,ARI,Waikato Taupo King Country,North Island,Waikato,Load,
+ARI1101,F,F,ARI1101,ARI,Waikato Taupo King Country,North Island,Waikato,Load,
+ARI1102,F,F,ARI1102,ARI,Waikato Taupo King Country,North Island,Waikato,Load,
+ASB0331,F,F,ASB0331,ASB,Canterbury,South Island,Canterbury,Load,
+ASB0661,F,F,ASB0661,ASB,Canterbury,South Island,Canterbury,Load,
+ASY0111,F,F,ASY0111,ASY,Canterbury,South Island,Canterbury,Load,
+ATI0111,F,F,ATI0111,ATI,Waikato Taupo King Country,North Island,Bay Of Plenty,Load,
+ATI2201,F,F,ATI2201,ATI,Waikato Taupo King Country,North Island,Bay Of Plenty,Load,
+ATU1101,F,F,ATU1101,ATU,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+AVI2201,F,F,AVI2201,AVI,Southland Otago,South Island,South Canterbury,Load,
+BAL0331,F,F,BAL0331,BAL,Southland Otago,South Island,Otago/Southland,Load,
+BDE0111,F,F,BDE0111,BDE,Southland Otago,South Island,Otago/Southland,Load,
+BEN0111,F,F,BEN0111,BEN,Southland Otago,South Island,South Canterbury,Load,
+BEN0161,F,F,BEN0161,BEN,Southland Otago,South Island,South Canterbury,Load,
+BEN0162,F,F,BEN0162,BEN,Southland Otago,South Island,South Canterbury,Load,
+BEN0163,F,F,BEN0163,BEN,Southland Otago,South Island,South Canterbury,Load,
+BEN2201,F,F,BEN2201,BEN,Southland Otago,South Island,South Canterbury,Load,
+BEN2202,F,F,BEN2202,BEN,Southland Otago,South Island,South Canterbury,Load,
+BOB0331,F,F,BOB0331,BOB,Auckland,North Island,Auckland,Load,
+BOB1101,F,F,BOB1101,BOB,Auckland,North Island,Auckland,Load,
+BPD1101,F,F,BPD1101,BPD,Southland Otago,South Island,South Canterbury,Load,
+BPE0331,F,F,BPE0331,BPE,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Load,
+BPE0551,F,F,BPE0551,BPE,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Load,
+BPT1101,F,F,BPT1101,BPT,Southland Otago,South Island,Otago/Southland,Load,
+BRB0331,F,F,BRB0331,BRB,Northland,North Island,North Isthmus,Load,
+BRK0331,F,F,BRK0331,BRK,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+BRY0111,F,F,BRY0111,BRY,Canterbury,South Island,Canterbury,Load,
+BRY0661,F,F,BRY0661,BRY,Canterbury,South Island,Canterbury,Load,
+BWK1101,F,F,BWK1101,BWK,Southland Otago,South Island,Otago/Southland,Load,
+CBE0331,F,F,CBE0331,Cainbrae,Canterbury,South Island,Canterbury,Load,
+CBG0111,F,F,CBG0111,CBG,Waikato Taupo King Country,North Island,Waikato,Load,
+CBG0111 ANC0,T,F,CBG0111,CBG,Waikato Taupo King Country,North Island,Waikato,Load,
+CLH0111,F,F,CLH0111,CLH,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+CML0331,F,F,CML0331,CML,Southland Otago,South Island,Otago/Southland,Load,
+COB0661,F,F,COB0661,COB,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+COL0111,F,F,COL0111,COL,West Coast Nelson Marlborough,South Island,Canterbury,Load,
+COL0661,F,F,COL0661,COL,West Coast Nelson Marlborough,South Island,Canterbury,Load,
+CPK0111,F,F,CPK0111,CPK,Wellington,North Island,Wellington,Load,
+CPK0331,F,F,CPK0331,CPK,Wellington,North Island,Wellington,Load,
+CST0111,F,F,CST0111,CST,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+CST0331,F,F,CST0331,CST,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+CUL0331,F,F,CUL0331,CUL,Canterbury,South Island,Canterbury,Load,
+CUL0661,F,F,CUL0661,CUL,Canterbury,South Island,Canterbury,Load,
+CYD0331,F,F,CYD0331,CYD,Southland Otago,South Island,Otago/Southland,Load,
+CYD2201,F,F,CYD2201,CYD,Southland Otago,South Island,Otago/Southland,Load,
+DAR0111,F,F,DAR0111,DAR,Northland,North Island,North Isthmus,Load,
+DOB0331,F,F,DOB0331,DOB,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+DVK0111,F,F,DVK0111,DVK,Hawkes' Bay East Coast Wairarapa,North Island,Central,Load,
+EDG0331,F,F,EDG0331,EDG,Bay of Plenty,North Island,Bay Of Plenty,Load,
+EDN0331,F,F,EDN0331,EDN,Southland Otago,South Island,Otago/Southland,Load,
+FHL0331,F,F,FHL0331,FHL,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+FKN0331,F,F,FKN0331,FKN,Southland Otago,South Island,Otago/Southland,Load,
+GFD0331,F,F,GFD0331,GFD,Wellington,North Island,Wellington,Load,
+GIS0111,F,F,GIS0111,GIS,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+GIS0501,F,F,GIS0501,GIS,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+GLN0331,F,F,GLN0331,GLN,Auckland,North Island,Auckland,Load,
+GLN0332,F,F,GLN0332,GLN,Auckland,North Island,Auckland,Load,
+GOR0331,F,F,GOR0331,GOR,Southland Otago,South Island,Otago/Southland,Load,
+GYM0661,F,F,GYM0661,GYM,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+GYT0331,F,F,GYT0331,GYT,Hawkes' Bay East Coast Wairarapa,North Island,Wellington,Load,
+HAM0111,F,F,HAM0111,HAM,Waikato Taupo King Country,North Island,Waikato,Load,
+HAM0331,F,F,HAM0331,HAM,Waikato Taupo King Country,North Island,Waikato,Load,
+HAM0551,F,F,HAM0551,HAM,Waikato Taupo King Country,North Island,Waikato,Load,
+HAY0111,F,F,HAY0111,HAY,Wellington,North Island,Wellington,Load,
+HAY0331,F,F,HAY0331,HAY,Wellington,North Island,Wellington,Load,
+HAY1101,F,F,HAY1101,HAY,Wellington,North Island,Wellington,Load,
+HAY2201,F,F,HAY2201,HAY,Wellington,North Island,Wellington,Load,
+HBK0661,F,F,HBK0661,Highbank,Canterbury,South Island,Canterbury,Load,
+HEN0331,F,F,HEN0331,HEN,Auckland,North Island,North Isthmus,Load,
+HEP0331,F,F,HEP0331,HEP,Auckland,North Island,North Isthmus,Load,
+HEP0331 MRC0,F,F,HEP0331,HEP,Auckland,North Island,North Isthmus,Load,
+HIN0331,F,F,HIN0331,HIN,Waikato Taupo King Country,North Island,Waikato,Load,
+HKK0661,F,F,HKK0661,HKK,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+HLY0331,F,F,HLY0331,HLY,Waikato Taupo King Country,North Island,Waikato,Load,
+HLY2201,F,F,HLY2201,HLY,Waikato Taupo King Country,North Island,Waikato,Load,
+HOR0331,F,F,HOR0331,HOR,West Coast Nelson Marlborough,South Island,Canterbury,Load,
+HOR0661,F,F,HOR0661,HOR,West Coast Nelson Marlborough,South Island,Canterbury,Load,
+HTI0331,F,F,HTI0331,HTI,Waikato Taupo King Country,North Island,Waikato,Load,
+HUI0331,F,F,HUI0331,HUI,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+HWA0331,F,F,HWA0331,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+HWA0331 KPL0,T,F,HWA0331,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+HWA0332,F,F,HWA0332,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+HWA1101,F,F,HWA1101,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+HWA1102,F,F,HWA1102,HWA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+HWB0331,F,F,HWB0331,HWB,Southland Otago,South Island,Otago/Southland,Load,
+HWB0332,F,F,HWB0332,HWB,Southland Otago,South Island,Otago/Southland,Load,
+INV0331,F,F,INV0331,INV,Southland Otago,South Island,Otago/Southland,Load,
+ISL0331,F,F,ISL0331,ISL,Canterbury,South Island,Canterbury,Load,
+ISL0661,F,F,ISL0661,ISL,Canterbury,South Island,Canterbury,Load,
+ISL0661 TPV,T,F,ISL0661,ISL,Canterbury,South Island,Canterbury,Load,
+ISL2201 TPV,T,F,ISL2201,ISL,Canterbury,South Island,Canterbury,Load,
+KAI0111,F,F,KAI0111,KAI,Canterbury,South Island,Canterbury,Load,
+KAW0111,F,F,KAW0111,KAW,Bay of Plenty,North Island,Bay Of Plenty,Load,Norske Skog
+KAW0112,F,F,KAW0112,KAW,Bay of Plenty,North Island,Bay Of Plenty,Load,Norske Skog
+KAW0113,F,F,KAW0113,KAW,Bay of Plenty,North Island,Bay Of Plenty,Load,Norske Skog
+KAW1101,F,F,KAW1101,KAW,Bay of Plenty,North Island,Bay Of Plenty,Load,Norske Skog
+KEN0331,F,F,KEN0331,KEN,Northland,North Island,North Isthmus,Load,
+KIK0111,F,F,KIK0111,KIK,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+KIN0111,F,F,KIN0111,KIN,Bay of Plenty,North Island,Bay Of Plenty,Load,
+KIN0112,F,F,KIN0112,KIN,Bay of Plenty,North Island,Bay Of Plenty,Load,
+KIN0113,F,F,KIN0113,KIN,Bay of Plenty,North Island,Bay Of Plenty,Load,
+KIN0331,F,F,KIN0331,KIN,Bay of Plenty,North Island,Bay Of Plenty,Load,
+KKA0331,F,F,KKA0331,KKA,Canterbury,South Island,Canterbury,Load,
+KMO0331,F,F,KMO0331,KMO,Bay of Plenty,North Island,Bay Of Plenty,Load,
+KOE0331,F,F,KOE0331,KOE,Northland,North Island,North Isthmus,Load,
+KOE1101,F,F,KOE1101,KOE,Northland,North Island,North Isthmus,Load,
+KPA1101,F,F,KPA1101,KPA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+KPO1101,F,F,KPO1101,KPO,Waikato Taupo King Country,North Island,Waikato,Load,
+KPU0661,F,F,KPU0661,KPU,Waikato Taupo King Country,North Island,Waikato,Load,
+KTA0331,F,F,KTA0331,KTA,Northland,North Island,North Isthmus,Load,
+KUM0661,F,F,KUM0661,KUM,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+KWA0111,F,F,KWA0111,KWA,Wellington,North Island,Wellington,Load,
+LFD1101,F,F,LFD1101,LFD,Bay of Plenty,North Island,Bay Of Plenty,Load,
+LFD1101 LFD0,T,F,LFD1101,LFD,Bay of Plenty,North Island,Bay Of Plenty,Load,
+LFD1102,F,F,LFD1102,LFD,Bay of Plenty,North Island,Bay Of Plenty,Load,
+LTN0331,F,F,LTN0331,LTN,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Load,
+MAN2201,F,F,MAN2201,MAN,Southland Otago,South Island,Otago/Southland,Load,Meridian Energy
+MAT1101,F,F,MAT1101,MAT,Bay of Plenty,North Island,Bay Of Plenty,Load,
+MAT1102,F,F,MAT1102,MAT,Bay of Plenty,North Island,Bay Of Plenty,Load,
+MCH0111,F,F,MCH0111,MCH,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+MDN0141,F,F,MDN0141,MDN,Northland,North Island,North Isthmus,Load,
+MDN0142,F,F,MDN0142,MDN,Northland,North Island,North Isthmus,Load,
+MDN0331,F,F,MDN0331,MDN,Northland,North Island,North Isthmus,Load,
+MDN1101,F,F,MDN1101,MDN,Northland,North Island,North Isthmus,Load,
+MER0331,F,F,MER0331,MER,Auckland,North Island,Auckland,Load,
+MER1101,F,F,MER1101,MER,Auckland,North Island,Auckland,Load,
+MER1101 MER0,T,F,MER1101,MER,Auckland,North Island,Auckland,Load,
+MGM0331,F,F,MGM0331,MGM,Hawkes' Bay East Coast Wairarapa,North Island,Central,Load,
+MHO0331,F,F,MHO0331,MHO,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Load,
+MKE1101,F,F,MKE1101,MKE,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Load,
+MKE1101 MKE1,T,F,MKE1101,MKE,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Load,
+MLG0111,F,F,MLG0111,MLG,Wellington,North Island,Wellington,Load,
+MLG0331,F,F,MLG0331,MLG,Wellington,North Island,Wellington,Load,
+MLN0661,F,F,MLN0661,MLN,Canterbury,South Island,Canterbury,Load,
+MLN0664,F,F,MLN0664,MLN,Canterbury,South Island,Canterbury,Load,
+MNG0331,F,F,MNG0331,MNG,Auckland,North Island,Auckland,Load,
+MNG1101,F,F,MNG1101,MNG,Auckland,North Island,Auckland,Load,
+MNI0111,F,F,MNI0111,MNI,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+MOT0111,F,F,MOT0111,MOT,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+MPE0331,F,F,MPE0331,MPE,Northland,North Island,North Isthmus,Load,
+MPI0331,F,F,MPI0331,MPI,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+MPI0661,F,F,MPI0661,MPI,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+MRA0111,F,F,MRA0111,MRA,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+MRR0111,F,F,MRR0111,Marotiri,Waikato Taupo King Country,North Island,Waikato,Load,
+MST0331,F,F,MST0331,MST,Hawkes' Bay East Coast Wairarapa,North Island,Wellington,Load,
+MTI0111,F,F,MTI0111,MTI,Waikato Taupo King Country,North Island,Waikato,Load,
+MTM0111,F,F,MTM0111,MTM,Bay of Plenty,North Island,Bay Of Plenty,Load,
+MTM0331,F,F,MTM0331,MTM,Bay of Plenty,North Island,Bay Of Plenty,Load,
+MTN0331,F,F,MTN0331,MTN,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Load,
+MTO0331,F,F,MTO0331,MTO,Northland,North Island,North Isthmus,Load,
+MTR0331,F,F,MTR0331,MTR,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Load,
+NAP2201,F,F,NAP2201,NAP,Waikato Taupo King Country,North Island,Waikato,Load,
+NAP2202,F,F,NAP2202,NAP,Waikato Taupo King Country,North Island,Waikato,Load,
+NMA0331,F,F,NMA0331,NMA,Southland Otago,South Island,Otago/Southland,Load,
+NPK0331,F,F,NPK0331,NPK,Waikato Taupo King Country,North Island,Central,Load,
+NPL0331,F,F,NPL0331,NPL,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+NSY0331,F,F,NSY0331,NSY,Southland Otago,South Island,Otago/Southland,Load,
+OAM0331,F,F,OAM0331,OAM,Southland Otago,South Island,South Canterbury,Load,
+OHA2201,F,F,OHA2201,OHA,Southland Otago,South Island,South Canterbury,Load,
+OHB2201,F,F,OHB2201,OHB,Southland Otago,South Island,South Canterbury,Load,
+OHC2201,F,F,OHC2201,OHC,Southland Otago,South Island,South Canterbury,Load,
+OHK2201,F,F,OHK2201,OHK,Bay of Plenty,North Island,Waikato,Load,
+OHW2201,F,F,OHW2201,OHW,Waikato Taupo King Country,North Island,Waikato,Load,
+OKI0111,F,F,OKI0111,OKI,Waikato Taupo King Country,North Island,Waikato,Load,
+OKI2201,F,F,OKI2201,OKI,Waikato Taupo King Country,North Island,Waikato,Load,
+OKN0111,F,F,OKN0111,OKN,Waikato Taupo King Country,North Island,Central,Load,
+ONG0331,F,F,ONG0331,ONG,Waikato Taupo King Country,North Island,Central,Load,
+OPK0331,F,F,OPK0331,OPK,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+ORO1101,F,F,ORO1101,ORO,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+ORO1102,F,F,ORO1102,ORO,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+OTA1101,F,F,OTA1101,OTA,Auckland,North Island,Auckland,Load,
+OTA1102,F,F,OTA1102,OTA,Auckland,North Island,Auckland,Load,
+OTA2202,F,F,OTA2202,OTA,Auckland,North Island,Auckland,Load,
+OTI0111,F,F,OTI0111,OTI,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+OWH0111,F,F,OWH0111,OWH,Bay of Plenty,North Island,Bay Of Plenty,Load,
+PAK0331,F,F,PAK0331,PAK,Auckland,North Island,Auckland,Load,
+PAL0331,F,F,PAL0331,PAL,Southland Otago,South Island,Otago/Southland,Load,
+PAO1101,F,F,PAO1101,PAO,Waikato Taupo King Country,North Island,Waikato,Load,
+PAP0111,F,F,PAP0111,PAP,Canterbury,South Island,Canterbury,Load,
+PAP0661,F,F,PAP0661,PAP,Canterbury,South Island,Canterbury,Load,
+PEN0221,F,F,PEN0221,PEN,Auckland,North Island,Auckland,Load,
+PEN0251,F,F,PEN0251,PEN,Auckland,North Island,Auckland,Load,
+PEN0331,F,F,PEN0331,PEN,Auckland,North Island,Auckland,Load,Vector
+PEN1101,F,F,PEN1101,PEN,Auckland,North Island,Auckland,Load,
+PNI0331,F,F,PNI0331,PNI,Wellington,North Island,Wellington,Load,
+PPI2201,F,F,PPI2201,PPI,Waikato Taupo King Country,North Island,Waikato,Load,
+PRM0331,F,F,PRM0331,PRM,Wellington,North Island,Wellington,Load,
+RDF0331,F,F,RDF0331,RDF,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+RFN1101,F,F,RFN1101,RFN,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+RFN1102,F,F,RFN1102,RFN,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+RFT0111,F,F,RFT0111,Reefton,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+ROB1101,F,F,ROB1101,ROB,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+ROS0221,F,F,ROS0221,ROS,Auckland,North Island,Auckland,Load,
+ROS1101,F,F,ROS1101,ROS,Auckland,North Island,Auckland,Load,
+ROT0111,F,F,ROT0111,ROT,Bay of Plenty,North Island,Bay Of Plenty,Load,
+ROT0331,F,F,ROT0331,ROT,Bay of Plenty,North Island,Bay Of Plenty,Load,
+ROT1101,F,F,ROT1101,ROT,Bay of Plenty,North Island,Bay Of Plenty,Load,
+ROX2201,F,F,ROX2201,ROX,Southland Otago,South Island,Otago/Southland,Load,
+RPO2201,F,F,RPO2201,RPO,Waikato Taupo King Country,North Island,Central,Load,
+SBK0331,F,F,SBK0331,SBK,Canterbury,South Island,Canterbury,Load,
+SDN0331,F,F,SDN0331,SDN,Southland Otago,South Island,Otago/Southland,Load,
+SFD0331,F,F,SFD0331,SFD,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+SFD2201,F,F,SFD2201,SFD,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,Contact Energy
+SPN0331,F,F,SPN0331,SPN,Canterbury,South Island,Canterbury,Load,
+SPN0661,F,F,SPN0661,SPN,Canterbury,South Island,Canterbury,Load,
+STK0331,F,F,STK0331,STK,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+STU0111,F,F,STU0111,STU,Southland Otago,South Island,South Canterbury,Load,
+SVL0331,F,F,SVL0331,SVL,Northland,North Island,North Isthmus,Load,
+SWN2201,F,F,SWN2201,SWN,Auckland,North Island,Auckland,Load,
+TAK0331,F,F,TAK0331,TAK,Auckland,North Island,Auckland,Load,
+TGA0111,F,F,TGA0111,TGA,Bay of Plenty,North Island,Bay Of Plenty,Load,
+TGA0331,F,F,TGA0331,TGA,Bay of Plenty,North Island,Bay Of Plenty,Load,
+THI2201,F,F,THI2201,THI,Waikato Taupo King Country,North Island,Waikato,Load,
+TIM0111,F,F,TIM0111,TIM,Canterbury,South Island,South Canterbury,Load,
+TKA0111,F,F,TKA0111,TKA,Canterbury,South Island,South Canterbury,Load,Genesis Energy
+TKA0331,F,F,TKA0331,TKA,Canterbury,South Island,South Canterbury,Load,Genesis Energy
+TKB2201,F,F,TKB2201,TKB,Canterbury,South Island,South Canterbury,Load,Genesis Energy
+TKH0111,F,F,TKH0111,TKH,Bay of Plenty,North Island,Bay Of Plenty,Load,
+TKR0331,F,F,TKR0331,TKR,Wellington,North Island,Wellington,Load,
+TKU0331,F,F,TKU0331,TKU,Waikato Taupo King Country,North Island,Central,Load,
+TKU2201,F,F,TKU2201,TKU,Waikato Taupo King Country,North Island,Central,Load,
+TMI0331,F,F,TMI0331,TMI,Bay of Plenty,North Island,Bay Of Plenty,Load,
+TMK0111,F,F,TMK0111,TMK,Canterbury,South Island,South Canterbury,Load,
+TMK0331,F,F,TMK0331,TMK,Canterbury,South Island,South Canterbury,Load,
+TMN0551,F,F,TMN0551,TMN,Waikato Taupo King Country,North Island,Taranaki,Load,
+TMU0111,F,F,TMU0111,TMU,Waikato Taupo King Country,North Island,Waikato,Load,
+TMU1101,F,F,TMU1101,TMU,Waikato Taupo King Country,North Island,Waikato,Load,
+TNG0111,F,F,TNG0111,TNG,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Load,
+TNG0551,F,F,TNG0551,TNG,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Load,
+TOB0501,F,F,TOB0501,Tokomaru Bay,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+TRK0111,F,F,TRK0111,TRK,Bay of Plenty,North Island,Bay Of Plenty,Load,
+TUI0111,F,F,TUI0111,TUI,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+TUI1101,F,F,TUI1101,TUI,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+TWC2201,F,F,TWC2201,TWC,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Load,
+TWH0331,F,F,TWH0331,TWH,Waikato Taupo King Country,North Island,Waikato,Load,
+TWI2201,F,F,TWI2201,TWI,Southland Otago,South Island,Otago/Southland,Load,Tiwai
+TWZ0331,F,F,TWZ0331,TWZ,Canterbury,South Island,South Canterbury,Load,
+UHT0331,F,F,UHT0331,UHT,Wellington,North Island,Wellington,Load,
+WAI0111,F,F,WAI0111,WAI,Bay of Plenty,North Island,Bay Of Plenty,Load,
+WDV0111,F,F,WDV0111,WDV,Hawkes' Bay East Coast Wairarapa,North Island,Central,Load,
+WDV1101,F,F,WDV1101,WDV,Hawkes' Bay East Coast Wairarapa,North Island,Central,Load,
+WEL0331,F,F,WEL0331,WEL,Northland,North Island,North Isthmus,Load,
+WES0331,F,F,WES0331,WES,Waikato Taupo King Country,North Island,Waikato,Load,
+WGN0331,F,F,WGN0331,WGN,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+WHI0111,F,F,WHI0111,WHI,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+WHI2201,F,F,WHI2201,WHI,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+WHU0331,F,F,WHU0331,WHU,Waikato Taupo King Country,North Island,Waikato,Load,
+WIL0331,F,F,WIL0331,WIL,Wellington,North Island,Wellington,Load,
+WIR0331,F,F,WIR0331,WIR,Auckland,North Island,Auckland,Load,
+WKM2201,F,F,WKM2201,WKM,Waikato Taupo King Country,North Island,Waikato,Load,
+WKO0331,F,F,WKO0331,WKO,Waikato Taupo King Country,North Island,Waikato,Load,
+WMG0331,F,F,WMG0331,WMG,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+WPA2201,F,F,WPA2201,WPA,Waikato Taupo King Country,North Island,Waikato,Load,
+WPR0331,F,F,WPR0331,WPR,Canterbury,South Island,Canterbury,Load,
+WPR0661,F,F,WPR0661,WPR,Canterbury,South Island,Canterbury,Load,
+WPT0111,F,F,WPT0111,WPT,West Coast Nelson Marlborough,South Island,Nelson/Marlborough,Load,
+WPW0331,F,F,WPW0331,WPW,Hawkes' Bay East Coast Wairarapa,North Island,Central,Load,
+WRA0111,F,F,WRA0111,WRA,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+WRA0501,F,F,WRA0501,WRA,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+WRK0331,F,F,WRK0331,WRK,Waikato Taupo King Country,North Island,Central,Load,
+WRK2201,F,F,WRK2201,WRK,Waikato Taupo King Country,North Island,Central,Load,
+WTK0111,F,F,WTK0111,WTK,Southland Otago,South Island,South Canterbury,Load,
+WTK0331,F,F,WTK0331,WTK,Southland Otago,South Island,South Canterbury,Load,
+WTK2201,F,F,WTK2201,WTK,Southland Otago,South Island,South Canterbury,Load,
+WTN0111,F,F,WTN0111,Winton,Southland Otago,South Island,Otago/Southland,Load,
+WTN0661,F,F,WTN0661,Winton,Southland Otago,South Island,Otago/Southland,Load,
+WTU0331,F,F,WTU0331,WTU,Hawkes' Bay East Coast Wairarapa,North Island,Hawkes Bay,Load,
+WVY0111,F,F,WVY0111,WVY,Taranaki Wanganui Manawatu Horowhenua,North Island,Taranaki,Load,
+WWD1102,F,F,WWD1102,WWD,Wellington,North Island,Wellington,Load,Meridian Energy
+WWD1103,F,F,WWD1103,WWD,Wellington,North Island,Wellington,Load,Meridian Energy
+MDN0141 MDN0,T,F,MDN0141,MDN,Northland,North Island,North Isthmus,Oil,
+MDN0141 MDN1,T,F,MDN0141,MDN,Northland,North Island,North Isthmus,Oil,
+MDN0141 MNA9,T,F,MDN0141,MDN,Northland,North Island,North Isthmus,Oil,
+MDN0142 MDN0,T,F,MDN0142,MDN,Northland,North Island,North Isthmus,Oil,
+MDN1101 MNB9,T,F,MDN1101,MDN,Northland,North Island,North Isthmus,Oil,
+BPE0331 TWF0,T,F,BPE0331,BPE,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Wind,Trustpower
+HWB0331 MAH0,T,F,HWB0331,HWB,Southland Otago,South Island,Otago/Southland,Wind,
+LTN0331 TWF0,T,F,LTN0331,LTN,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Wind,Trustpower
+NMA0331 WHL0,T,F,NMA0331,NMA,Southland Otago,South Island,Otago/Southland,Wind,Trustpower
+TWC2201 NZW0,T,F,TWC2201,TWC,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Wind,Trustpower
+TWC2201 TWF0,T,F,TWC2201,TWC,Taranaki Wanganui Manawatu Horowhenua,North Island,Central,Wind,Trustpower
+TWH0331 TUK0,T,F,TWH0331,TWH,Waikato Taupo King Country,North Island,Waikato,Wind,Meridian Energy
+WDV1101 TAP0,T,F,WDV1101,WDV,Hawkes' Bay East Coast Wairarapa,North Island,Central,Wind,Meridian Energy
+WWD1102 WWD0,T,F,WWD1102,WWD,Wellington,North Island,Wellington,Wind,Meridian Energy
+WWD1103 WWD0,T,F,WWD1103,WWD,Wellington,North Island,Wellington,Wind,Meridian Energy

@@ -21,6 +21,9 @@ file_path = os.path.abspath(__file__)
 module_path = os.path.split(os.path.split(file_path)[0])[0]
 config_name = os.path.join(module_path, 'config.json')
 
+# Get the meta_information path
+meta_path = os.path.join(module_path, "static/nodal_metadata.csv")
+
 class NZEMDB(object):
     """docstring for NZEMDB"""
     def __init__(self, DB_KEY):
@@ -285,10 +288,64 @@ class NZEMDB(object):
 
         return all_information
 
+
+    def query_nodal_demand(self, begin_date=None, end_date=None, nodes=None,
+                          dates=None, begin_period=None, end_period=None,
+                          periods=None, minimum_demand=None,
+                          maximum_demand=None, apply_meta=False,
+                          meta_group=None, meta_agg=None):
+
+        # Error checking on the dates and period range consistencies
+        self._check_required_range(dates, begin_date, end_date)
+        self._check_optional_range(periods, begin_period, end_period)
+
+        # Set up the initial SQL queries with dates loaded in
+        all_queries = self.create_date_limited_sql("nodal_demand", dates=dates,
+                                                   begin_date=begin_date,
+                                                   end_date=end_date,
+                                                   date_col="Trading_date")
+
+        completed_queries = []
+        for sql in all_queries:
+            if periods:
+                sql += self.add_equality_constraint('Trading_period', periods)
+
+            elif (begin_period and end_period):
+                sql += self.add_range_constraint('Trading_period',
+                                                  begin_period, end_period)
+
+            if nodes:
+                sql += self.add_equality_constraint("Node", nodes)
+
+            if minimum_demand:
+                sql += self.add_minimum_constraint("Demand", minimum_demand)
+
+            if maximum_demand:
+                sql += self.add_maximum_constraint("Demand", maximum_demand)
+
+            sql += ';'
+            completed_queries.append(sql)
+
+        demand = pd.concat((self.query_to_df(q) for q in completed_queries),
+                         ignore_index=True)
+
+        if apply_meta:
+            meta_info = pd.read_csv(meta_path)
+            demand = demand.merge(meta_info, left_on="node", right_on="Bus Id")
+
+            if meta_group and meta_agg:
+                grouped = demand.groupby(meta_group)
+                aggregate = grouped.aggregate(meta_agg)
+
+                return aggregate
+
+        return demand
+
+
     def query_nodal_price(self, begin_date=None, end_date=None, nodes=None,
                           dates=None, begin_period=None, end_period=None,
                           periods=None, minimum_price=None,
-                          maximum_price=None):
+                          maximum_price=None, apply_meta=False):
         """ Query the Nodal Price Database to obtain relevant information
         """
         # Error checking on the dates and period range consistencies
@@ -317,14 +374,19 @@ class NZEMDB(object):
                 sql += self.add_minimum_constraint("Price", minimum_price)
 
             if maximum_price:
-                sql += self.add_maximum_constraint("Price", minimum_price)
+                sql += self.add_maximum_constraint("Price", maximum_price)
 
             sql += ';'
             completed_queries.append(sql)
 
-        return pd.concat((self.query_to_df(q) for q in completed_queries),
+        prices = pd.concat((self.query_to_df(q) for q in completed_queries),
                          ignore_index=True)
 
+        if apply_meta:
+            meta_info = pd.read_csv(meta_path)
+            prices = prices.merge(meta_info, left_on="node", right_on="Bus Id")
+
+        return prices
 
 
 
@@ -391,6 +453,13 @@ class NZEMDB(object):
         else:
             return self.add_multiple_section_constraint(column, values)
 
+    def add_exclusion_constraint(self, column, values):
+
+        if not hasattr(values, '__iter__'):
+            return self.add_single_exclusion_constraint(column, values)
+        else:
+            return self.add_multiple_exclusion_constraint(column, values)
+
     def add_minimum_constraint(self, column, value):
         return """ AND %s >= '%s'""" % (column, value)
 
@@ -407,6 +476,16 @@ class NZEMDB(object):
         joined = "','".join(values)
         jvalues = "('%s')" % joined
         return """ AND %s IN %s""" % (column, jvalues)
+
+    def add_single_exclusion_constraint(self, column, value):
+        return """ AND %s!='%s'""" % (column, value):
+
+
+    def add_multiple_exclusion_constraint(self, column, values):
+        joined = "','".join(values)
+        jvalues="('%s')" % joined
+        return """ AND %s NOT IN %s""" % (column, jvalues)
+
 
     def _check_required_range(self, specific=None, begin=None, end=None):
         if not specific and not (begin and end):
