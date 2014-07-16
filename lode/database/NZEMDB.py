@@ -285,16 +285,59 @@ class NZEMDB(object):
 
         return all_information
 
+    def query_nodal_price(self, begin_date=None, end_date=None, nodes=None,
+                          dates=None, begin_period=None, end_period=None,
+                          periods=None, minimum_price=None,
+                          maximum_price=None):
+        """ Query the Nodal Price Database to obtain relevant information
+        """
+        # Error checking on the dates and period range consistencies
+        self._check_required_range(dates, begin_date, end_date)
+        self._check_optional_range(periods, begin_period, end_period)
+
+        # Set up the initial SQL queries with dates loaded in
+        all_queries = self.create_date_limited_sql("nodal_prices", dates=dates,
+                                                   begin_date=begin_date,
+                                                   end_date=end_date,
+                                                   date_col="Trading_date")
+
+        completed_queries = []
+        for sql in all_queries:
+            if periods:
+                sql += self.add_equality_constraint('Trading_period', periods)
+
+            elif (begin_period and end_period):
+                sql += self.add_range_constraint('Trading_period',
+                                                  begin_period, end_period)
+
+            if nodes:
+                sql += self.add_equality_constraint("Node", nodes)
+
+            if minimum_price:
+                sql += self.add_minimum_constraint("Price", minimum_price)
+
+            if maximum_price:
+                sql += self.add_maximum_constraint("Price", minimum_price)
+
+            sql += ';'
+            completed_queries.append(sql)
+
+        return pd.concat((self.query_to_df(q) for q in completed_queries),
+                         ignore_index=True)
+
+
+
 
     def create_date_limited_sql(self, master_table, dates=None,
-                                begin_date=None, end_date=None):
+                                begin_date=None, end_date=None,
+                                date_col="trading_date"):
         all_queries = []
         # If passing a single date
         if dates:
             if type(dates) == str:
                 dt = parse(dates)
-                SQL = """ SELECT * FROM %s_%s WHERE trading_date='%s'""" % (
-                    master_table, dt.year, dt.strftime('%d-%m-%Y'))
+                SQL = """ SELECT * FROM %s_%s WHERE %s='%s'""" % (
+                    master_table, dt.year, date_col, dt.strftime('%d-%m-%Y'))
 
                 all_queries.append(SQL)
 
@@ -308,7 +351,7 @@ class NZEMDB(object):
                 for year in years_dict:
                     strings = "','".join([x.strftime("%d-%m-%Y") for x in years_dict[year]])
                     date_string = "('%s')" % strings
-                    SQL = """ SELECT * FROM %s_%s WHERE trading_date in %s""" % (master_table, year, date_string)
+                    SQL = """ SELECT * FROM %s_%s WHERE %s in %s""" % (master_table, year, date_col, date_string)
 
                     all_queries.append(SQL)
 
@@ -333,7 +376,7 @@ class NZEMDB(object):
                 else:
                     ed = yend % year
 
-                SQL = """SELECT * FROM %s_%s WHERE trading_date BETWEEN '%s' AND '%s'""" % (master_table, year, beg, ed)
+                SQL = """SELECT * FROM %s_%s WHERE %s BETWEEN '%s' AND '%s'""" % (master_table, year, date_col, beg, ed)
 
                 all_queries.append(SQL)
 
@@ -348,6 +391,11 @@ class NZEMDB(object):
         else:
             return self.add_multiple_section_constraint(column, values)
 
+    def add_minimum_constraint(self, column, value):
+        return """ AND %s >= '%s'""" % (column, value)
+
+    def add_maximum_constraint(self, column, value):
+        return """ AND %s <= '%s'""" % (column, value)
 
     def add_range_constraint(self, column, begin, end):
         return """ AND %s BETWEEN '%s' AND '%s'""" % (column, begin, end)
