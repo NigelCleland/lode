@@ -344,7 +344,7 @@ class NZEMDB(object):
 
         if apply_meta:
             meta_info = pd.read_csv(meta_path)
-            demand = demand.merge(meta_info, left_on="node", right_on="Bus Id")
+            demand = demand.merge(meta_info, left_on="node", right_on="Node")
 
             if meta_group and meta_agg:
                 grouped = demand.groupby(meta_group)
@@ -397,7 +397,7 @@ class NZEMDB(object):
 
         if apply_meta:
             meta_info = pd.read_csv(meta_path)
-            prices = prices.merge(meta_info, left_on="node", right_on="Bus Id")
+            prices = prices.merge(meta_info, left_on="node", right_on="Node")
 
         return prices
 
@@ -491,7 +491,7 @@ class NZEMDB(object):
         return """ AND %s IN %s""" % (column, jvalues)
 
     def add_single_exclusion_constraint(self, column, value):
-        return """ AND %s!='%s'""" % (column, value):
+        return """ AND %s!='%s'""" % (column, value)
 
 
     def add_multiple_exclusion_constraint(self, column, values):
