@@ -293,7 +293,16 @@ class NZEMDB(object):
                           dates=None, begin_period=None, end_period=None,
                           periods=None, minimum_demand=None,
                           maximum_demand=None, apply_meta=False,
-                          meta_group=None, meta_agg=None):
+                          meta_group=None, meta_agg=None,
+                          excl_nodes=None):
+
+
+        # Helper function for the wind nodes as wind is a negative load at the
+        # moment on the GXPs
+        if excl_nodes == "Wind":
+            excl_nodes = ("TWC2201", "WDV1101", "WWD1101", "WWD1102",
+                          "WWD1103", "TWH0331")
+
 
         # Error checking on the dates and period range consistencies
         self._check_required_range(dates, begin_date, end_date)
@@ -322,6 +331,10 @@ class NZEMDB(object):
 
             if maximum_demand:
                 sql += self.add_maximum_constraint("Demand", maximum_demand)
+
+            # Exclude certain nodes
+            if excl_nodes:
+                sql += self.add_exclusion_constraint("Node", excl_nodes)
 
             sql += ';'
             completed_queries.append(sql)
