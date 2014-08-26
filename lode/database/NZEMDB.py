@@ -56,7 +56,10 @@ class NZEMDB(object):
         """ Parse a filename to get the year it is in """
         year = re.findall(r"\d+", os.path.basename(fName))[0]
 
-        if len(year) == 6:
+        # Quick check as the year may be raw
+        if len(year) == 4:
+            return year
+        elif len(year) == 6:
             date = datetime.datetime.strptime(year, "%Y%m")
         else:
             date = datetime.datetime.strptime(year, "%Y%m%d")
