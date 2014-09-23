@@ -372,6 +372,9 @@ class Scraper(object):
 
         datestring = self.scrub_string(x, pattern, ext, rename=rename)
 
+        if not datestring:
+            return []
+
         if len(datestring) == 6:
             date = datetime.datetime.strptime(datestring, "%Y%m")
             y, m = date.year, date.month
@@ -409,7 +412,12 @@ class Scraper(object):
             # GDX files are named weird. It's a real issue and a major pain.
             # Could fix this to handle updating?
             # E.g. emphasis _F over _I etc.
-            replacers = ('x_F', '_F', '_I', 'a', 'b')
+            replacers = ('x_F', '_F', 'a', 'b')
+
+            # Don't want to get the interim files, this may not work.
+            if "_I" in base_str:
+                return None
+
             for each in replacers:
                 base_str = base_str.replace(each, '')
 
