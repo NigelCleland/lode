@@ -24,6 +24,27 @@ config_name = os.path.join(module_path, 'config.json')
 # Get the meta_information path
 meta_path = os.path.join(module_path, "static/nodal_metadata.csv")
 
+def list_databases():
+    """ Helper function to list the different databases that can be connected
+    to, useful if running in an interaction session, saves hunting through
+    the config
+    """
+    with open(config_name, 'rb') as f:
+        config = simplejson.load(f)
+
+    databases = [x for x in config.keys() if "schemas" in config[x]]
+    return databases
+
+def list_tables(database):
+    """ Helper function to list the tables associated with a particular DB"""
+    with open(config_name, 'rb') as f:
+        config = simplejson.load(f)
+
+    tables = [x for x in config[database]['schemas']]
+
+    return tables
+
+
 class NZEMDB(object):
     """docstring for NZEMDB"""
     def __init__(self, DB_KEY):
