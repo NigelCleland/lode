@@ -1,18 +1,17 @@
 #!/usr/bin/python
 import psycopg2 as pg2
 import simplejson
+import pandas
 import pandas.io.sql as psql
 import pandas as pd
 import os
 import shutil
 import glob
-import sh
-import csv
 import re
 import datetime
 from collections import defaultdict
 from dateutil.parser import parse
-import datetime
+
 
 from itertools import izip
 
@@ -26,6 +25,7 @@ config_name = os.path.join(module_path, 'config.json')
 # Get the meta_information path
 meta_path = os.path.join(module_path, "static/nodal_metadata.csv")
 
+
 def list_databases():
     """ Helper function to list the different databases that can be connected
     to, useful if running in an interaction session, saves hunting through
@@ -36,6 +36,7 @@ def list_databases():
 
     databases = [x for x in config.keys() if "schemas" in config[x]]
     return databases
+
 
 def list_tables(database):
     """ Helper function to list the tables associated with a particular DB"""
@@ -61,9 +62,9 @@ class NZEMDB(object):
         self.user = self.CONFIG[DB_KEY]["database_user"]
         self.host = "localhost"
         self.password = self.CONFIG[DB_KEY]["database_pass"]
-        self.conn_string = "dbname=%s user=%s password=%s host=%s" % (
-                            self.db, self.user, self.password, self.host)
-
+        self.conn_string = """dbname=%s user=%s password=%s
+                              host=%s""" % (self.db, self.user, self.password,
+                                            self.host)
 
     def refresh_config(self):
         """ This permits hot loading of the config file instead of linking
@@ -73,7 +74,6 @@ class NZEMDB(object):
             self.CONFIG = simplejson.load(f)
 
         return self
-
 
     def get_year(self, fName):
         """ Parse a filename to get the year it is in """
@@ -88,7 +88,6 @@ class NZEMDB(object):
             date = datetime.datetime.strptime(year, "%Y%m%d")
 
         return date.strftime("%Y")
-
 
     def insert_to_database(self, query, csvfile, tabname):
         try:
@@ -106,7 +105,8 @@ class NZEMDB(object):
             homeName = os.path.expanduser("~/%s" % fName)
             shutil.copy(csvfile, homeName)
             os.chmod(homeName, 0644)
-            query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;""" % (tabname, homeName)
+            query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;
+                    """ % (tabname, homeName)
             try:
                 self.execute_and_commit_sql(query)
             except pg2.IntegrityError as e:
@@ -118,7 +118,6 @@ class NZEMDB(object):
                 self.execute_and_commit_sql(query)
 
             os.remove(homeName)
-
 
     def insert_from_csv(self, table, csvfile):
 
@@ -133,18 +132,20 @@ class NZEMDB(object):
         #table_headers = self.get_column_names(table_year)
 
         table_headers = self.get_column_names(table_name)
-        insert_headers = ",".join([x[0] for x in table_headers if "key" not in x[0]])
+        insert_headers = ",".join([x[0] for x in
+                                   table_headers if "key" not in x[0]])
         tabname = "%s(%s)" % (table_name, insert_headers)
 
         existing_headers = self.check_csv_headers(csvfile, table_headers)
 
         if existing_headers:
-            query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;""" % (tabname, csvfile)
+            query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;
+                    """ % (tabname, csvfile)
         else:
-            query = """COPY %s FROM '%s' DELIMITER ',' CSV;""" % (tabname, csvfile)
+            query = """COPY %s FROM '%s' DELIMITER ',' CSV;
+                    """ % (tabname, csvfile)
 
         self.insert_to_database(query, csvfile, tabname)
-
 
     def strip_fileendings(self, fName):
         print "Attempting to strip the shitty endings"
@@ -174,8 +175,7 @@ class NZEMDB(object):
                 curs.execute(sql)
                 conn.commit()
 
-
-    def execute_and_fetchall_sql(self, sql):
+    def ex_sql_and_fetch(self, sql):
         with pg2.connect(self.conn_string) as conn:
             with conn.cursor() as curs:
                 curs.execute(sql)
@@ -183,13 +183,12 @@ class NZEMDB(object):
 
         return records
 
-
     def get_column_names(self, table):
 
-        sql = """SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='%s'""" % table
+        sql = """SELECT column_name FROM information_schema.columns
+                 WHERE table_schema='public' AND table_name='%s'""" % table
 
-        return self.execute_and_fetchall_sql(sql)[::-1]
-
+        return self.ex_sql_and_fetch(sql)[::-1]
 
     def create_all_tables(self):
 
@@ -205,11 +204,9 @@ class NZEMDB(object):
             else:
                 self.execute_and_commit_sql(sql)
 
-
     def drop_table(self, table):
         sql = """DROP TABLE %s""" % table
         self.execute_and_commit_sql(sql)
-
 
     def drop_tables(self, master_table):
 
@@ -217,18 +214,14 @@ class NZEMDB(object):
             for year in self.schemas[master_table]["split_years"]:
                 self.drop_table("_".join([master_table, str(year)]))
 
-
     def query_to_df(self, sql):
         """ Use a Generator here as we're Lazy """
 
         with pg2.connect(self.conn_string) as conn:
             yield psql.read_sql(sql, conn)
 
-
-
     def columnise_trading_periods(self, df):
         pass
-
 
     def insert_many_csv(self, table, folder):
 
@@ -242,19 +235,18 @@ class NZEMDB(object):
         pass
 
     def list_all_tables(self):
-        return self.execute_and_fetchall_sql("SELECT * FROM pg_catalog.pg_tables")
+        return self.ex_sql_and_fetch("SELECT * FROM pg_catalog.pg_tables")
 
     def get_table_size(self, table):
-        SQL = """ SELECT pg_size_pretty(pg_total_relation_size('%s'));""" % table
-        return self.execute_and_fetchall_sql(SQL)
-
+        SQL = """ SELECT pg_size_pretty(pg_total_relation_size('%s'));
+              """ % table
+        return self.ex_sql_and_fetch(SQL)
 
     def get_all_table_sizes(self, master_table):
         if self.schemas[master_table]["split_by_year"]:
             for year in self.schemas[master_table]["split_years"]:
                 table = master_table + '_%s' % year
                 print table, self.get_table_size(table)
-
 
     def query_offer(self, master_table, dates=None, begin_date=None,
                     end_date=None, companies=None, stations=None, periods=None,
@@ -273,7 +265,7 @@ class NZEMDB(object):
         # Map grid locations based upon which query is being run.
         grid_map = {"energy_offers": "grid_injection_point",
                     "generatorreserves_offers": "grid_point",
-                     "ilreserves_offers": "grid_exit_point"}
+                    "ilreserves_offers": "grid_exit_point"}
 
         # Add all of the other constraints:
         completed_queries = []
@@ -284,7 +276,7 @@ class NZEMDB(object):
 
             elif (begin_period and end_period):
                 sql += self.add_range_constraint('trading_period',
-                                                  begin_period, end_period)
+                                                 begin_period, end_period)
 
             if companies:
                 sql += self.add_equality_constraint('company', companies)
@@ -295,7 +287,7 @@ class NZEMDB(object):
             if grid_points:
 
                 sql += self.add_equality_constraint(grid_map[master_table],
-                                                     grid_points)
+                                                    grid_points)
 
             # Once all constraints have been added end the SQL statement
             sql += ';'
@@ -304,31 +296,27 @@ class NZEMDB(object):
         # Run all of the required queries, returning the result as a DF
         all_information = pd.concat((self.query_to_df(q) for
                                      q in completed_queries),
-                                     ignore_index=True)
+                                    ignore_index=True)
 
         # Optionally modify to an offer frame.
         if as_offerframe:
             df = Frame(all_information)
             return df.modify_frame()
 
-
         return all_information
 
-
     def query_nodal_demand(self, begin_date=None, end_date=None, nodes=None,
-                          dates=None, begin_period=None, end_period=None,
-                          periods=None, minimum_demand=None,
-                          maximum_demand=None, apply_meta=False,
-                          meta_group=None, meta_agg=None,
-                          excl_nodes=None):
-
+                           dates=None, begin_period=None, end_period=None,
+                           periods=None, minimum_demand=None,
+                           maximum_demand=None, apply_meta=False,
+                           meta_group=None, meta_agg=None,
+                           excl_nodes=None):
 
         # Helper function for the wind nodes as wind is a negative load at the
         # moment on the GXPs
         if excl_nodes == "Wind":
             excl_nodes = ("TWC2201", "WDV1101", "WWD1101", "WWD1102",
                           "WWD1103", "TWH0331")
-
 
         # Error checking on the dates and period range consistencies
         self._check_required_range(dates, begin_date, end_date)
@@ -347,7 +335,7 @@ class NZEMDB(object):
 
             elif (begin_period and end_period):
                 sql += self.add_range_constraint('Trading_period',
-                                                  begin_period, end_period)
+                                                 begin_period, end_period)
 
             if nodes:
                 sql += self.add_equality_constraint("Node", nodes)
@@ -366,7 +354,7 @@ class NZEMDB(object):
             completed_queries.append(sql)
 
         demand = pd.concat((self.query_to_df(q) for q in completed_queries),
-                         ignore_index=True)
+                           ignore_index=True)
 
         if apply_meta:
             meta_info = pd.read_csv(meta_path)
@@ -379,7 +367,6 @@ class NZEMDB(object):
                 return aggregate
 
         return demand
-
 
     def query_nodal_price(self, begin_date=None, end_date=None, nodes=None,
                           dates=None, begin_period=None, end_period=None,
@@ -404,7 +391,7 @@ class NZEMDB(object):
 
             elif (begin_period and end_period):
                 sql += self.add_range_constraint('Trading_period',
-                                                  begin_period, end_period)
+                                                 begin_period, end_period)
 
             if nodes:
                 sql += self.add_equality_constraint("Node", nodes)
@@ -419,15 +406,13 @@ class NZEMDB(object):
             completed_queries.append(sql)
 
         prices = pd.concat((self.query_to_df(q) for q in completed_queries),
-                         ignore_index=True)
+                           ignore_index=True)
 
         if apply_meta:
             meta_info = pd.read_csv(meta_path)
             prices = prices.merge(meta_info, left_on="node", right_on="Node")
 
         return prices
-
-
 
     def create_date_limited_sql(self, master_table, dates=None,
                                 begin_date=None, end_date=None,
@@ -451,12 +436,12 @@ class NZEMDB(object):
                                                    master_table, date_col))
 
             elif range_break == "Month":
-
-               return list(self._monthly_sql_dates(begin_date, end_date,
-                                                   master_table, date_col))
+                return list(self._monthly_sql_dates(begin_date, end_date,
+                                                    master_table, date_col))
 
             else:
-                raise ValueError("Range Breaks for %s have not been implemented, try 'Year'" % range_break)
+                raise ValueError("""Range Breaks for %s have not been
+                                    implemented, try 'Year'""" % range_break)
 
         return all_queries
 
@@ -468,13 +453,14 @@ class NZEMDB(object):
             years_dict[dt.year].append(dt)
 
         for year in years_dict:
-            strings = "','".join([x.strftime("%d-%m-%Y") for x in years_dict[year]])
+            strings = "','".join([x.strftime("%d-%m-%Y") for x in
+                                  years_dict[year]])
+
             date_string = "('%s')" % strings
             query_string = """ SELECT * FROM %s_%s WHERE %s in %s"""
             SQL = query_string % (master_table, year, date_col, date_string)
 
             yield SQL
-
 
     def _yearly_sql_dates(self, begin_date, end_date, master_table, date_col):
         # Parse the dates as they're probably strings
@@ -487,22 +473,21 @@ class NZEMDB(object):
 
         # Return the first string
         yield query_string % (master_table, begin_date.year, date_col,
-                            begin_date.strftime('%d-%m-%Y'),
-                            dec31 % begin_date.year)
+                              begin_date.strftime('%d-%m-%Y'),
+                              dec31 % begin_date.year)
 
         # Yield the intermediate dates if any
-        years = range(begin_date.year+1, end_date.year)
+        years = range(begin_date.year + 1, end_date.year)
         if len(years) > 0:
             for year in years:
                 yield query_string % (master_table, year, date_col,
-                            jan1 % year, dec31 % year)
+                                      jan1 % year, dec31 % year)
 
         # Yield the last date
         if end_date.year != begin_date.year:
             yield query_string % (master_table, begin_date.year, date_col,
-                            jan1 % end_date.year,
-                            end_date.strftime('%d-%m-%Y'))
-
+                                  jan1 % end_date.year,
+                                  end_date.strftime('%d-%m-%Y'))
 
     def _monthly_sql_dates(self, begin_date, end_date, master_table, date_col):
 
@@ -513,7 +498,8 @@ class NZEMDB(object):
         end_date = self._parse_date(end_date)
 
         month_range = list(pd.date_range(begin_date, end_date, freq="M"))
-        month_range_p1 = [x + datetime.timedelta(days=1) for x in month_range[:-1]]
+        month_range_p1 = [x + datetime.timedelta(days=1) for x in
+                          month_range[:-1]]
 
         if month_range[-1] == end_date:
             end_dates = month_range
@@ -530,7 +516,6 @@ class NZEMDB(object):
 
             yield query_string % (master_table, s.year, date_col, beg, end)
 
-
     def _parse_date(self, x):
 
         allowable_dates = (datetime.datetime, pandas.tslib.Timestamp,
@@ -538,9 +523,6 @@ class NZEMDB(object):
         if type(x) in allowable_dates:
             return x
         return parse(x)
-
-
-
 
     def add_equality_constraint(self, column, values):
 
@@ -576,12 +558,10 @@ class NZEMDB(object):
     def add_single_exclusion_constraint(self, column, value):
         return """ AND %s!='%s'""" % (column, value)
 
-
     def add_multiple_exclusion_constraint(self, column, values):
         joined = "','".join(values)
-        jvalues="('%s')" % joined
+        jvalues = "('%s')" % joined
         return """ AND %s NOT IN %s""" % (column, jvalues)
-
 
     def _check_required_range(self, specific=None, begin=None, end=None):
         if not specific and not (begin and end):
@@ -600,12 +580,5 @@ class NZEMDB(object):
         if (begin and not end) or (end and not begin):
             raise ValueError("Must pass both begin and end for ranges")
 
-
-
 if __name__ == '__main__':
     pass
-
-
-
-
-
