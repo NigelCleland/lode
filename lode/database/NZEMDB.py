@@ -12,6 +12,9 @@ from dateutil.parser import parse
 from lode.utilities.util import (parse_date, load_config,
                                  get_file_year_str, meta_path)
 
+from lode.database.helpers import (check_csv_headers,
+                                   strip_fileendings)
+
 from itertools import izip
 from OfferPandas import Frame
 
@@ -67,7 +70,7 @@ class NZEMDB(object):
                 print e
             except pg2.DataError as e:
                 print e
-                self.strip_fileendings(homeName)
+                strip_fileendings(homeName)
                 self.execute_and_commit_sql(query)
 
             os.remove(homeName)
@@ -86,7 +89,7 @@ class NZEMDB(object):
                                    table_headers if "key" not in x[0]])
         tabname = "%s(%s)" % (table_name, insert_headers)
 
-        existing_headers = self.check_csv_headers(csvfile, table_headers)
+        existing_headers = check_csv_headers(csvfile, table_headers)
 
         if existing_headers:
             query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;
@@ -107,16 +110,6 @@ class NZEMDB(object):
         with open(fName, 'wb') as f:
             for row in data_new:
                 f.write(row)
-
-    def check_csv_headers(self, csvfile, table_headers):
-
-        with open(csvfile, 'rb') as f:
-            header = f.readline()
-
-        if table_headers[1][0] not in header.lower():
-            return False
-
-        return True
 
     def execute_and_commit_sql(self, sql):
 
@@ -170,9 +163,6 @@ class NZEMDB(object):
         with pg2.connect(self.conn_string) as conn:
             yield psql.read_sql(sql, conn)
 
-    def columnise_trading_periods(self, df):
-        pass
-
     def insert_many_csv(self, table, folder):
 
         allcsv_files = glob.glob(folder + "/*.csv")
@@ -180,9 +170,6 @@ class NZEMDB(object):
             print "Attempting to load %s" % f
             self.insert_from_csv(table, f)
             print "%s succesfully loaded to %s" % (f, table)
-
-    def update_table(self, table):
-        pass
 
     def list_all_tables(self):
         return self.ex_sql_and_fetch("SELECT * FROM pg_catalog.pg_tables")

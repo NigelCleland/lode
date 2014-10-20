@@ -33,5 +33,17 @@ def check_csv_headers(csvfile, headers):
     return True
 
 
+def strip_fileendings(fName):
+    print "Attempting to strip the shitty endings"
+    with open(fName, 'rb') as f:
+        data = f.readlines()
+
+    data_new = [d.replace("\r\n", "\n") for d in data]
+
+    with open(fName, 'wb') as f:
+        for row in data_new:
+            f.write(row)
+
+
 if __name__ == '__main__':
     pass
