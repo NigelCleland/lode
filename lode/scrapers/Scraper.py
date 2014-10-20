@@ -33,7 +33,6 @@ class Scraper(object):
         super(Scraper, self).__init__()
         self.refresh_config()
 
-
     def refresh_config(self):
         """ This permits hot loading of the config file instead of linking
         it to only be initialised on startup
@@ -42,7 +41,6 @@ class Scraper(object):
             self.CONFIG = simplejson.load(f)
 
         return self
-
 
     def get_links(self, url):
         """ Use Requests and Beautiful Soup to get all of the links
@@ -56,7 +54,6 @@ class Scraper(object):
         soup = BeautifulSoup(r.text)
         self.all_links = soup.findAll('a')
         return self
-
 
     def get_list_difference(self, set_one, set_two):
         """ Use Set Logic to get the difference between two sets.
@@ -101,7 +98,8 @@ class Scraper(object):
                 w.write(opened.read())
         except Exception:
             # We keep going as the links can be dead.
-            print "Had Difficulties downloading %s, continuing anyway" % full_url
+            print """Had Difficulties downloading %s, continuing anyway
+                  """ % full_url
             save_location = None
 
         return save_location
@@ -140,7 +138,7 @@ class Scraper(object):
 
         self.build_file_db(file_location, pattern, ext, rename=rename,
                            date_type=date_type)
-        self.build_url_db(url, pattern, ext+cext, rename=rename,
+        self.build_url_db(url, pattern, ext + cext, rename=rename,
                           date_type=date_type, match_type=match_type)
         self.build_unique_url_dates()
 
@@ -153,7 +151,6 @@ class Scraper(object):
             if url_seed not in self.completed_seeds:
                 fName = self.download_file(url_seed)
 
-
                 if cext != '' and fName is not None:
                     fName = self.extract_csvz_file(fName, cext)
 
@@ -164,23 +161,22 @@ class Scraper(object):
                     shutil.move(fName, new_fName)
                     fName = new_fName
 
-
                 if fName is not None:
-                    final_location = self.move_completed_file(fName,
-                                         file_location, pattern, rename=rename)
-                    print "%s successfully downloaded" % os.path.basename(fName)
+                    floc = self.move_completed_file(fName, file_location,
+                                                    pattern, rename=rename)
+                    print "%s downloaded" % os.path.basename(fName)
 
                     if ext == ".XML":
                         try:
-                            self.parse_xml_to_csv(final_location)
+                            self.parse_xml_to_csv(floc)
                         except:
                             print "Encountered a parsing error, steamrolling"
 
                 else:
-                    print "%s was a dead link, continuing full steam" % url_seed
+                    print """%s was a dead link, continuing full steam
+                          """ % url_seed
 
             self.completed_seeds.append(url_seed)
-
 
     def move_completed_file(self, fName, save_loc, pattern, rename=None):
         """ Moves a file to a new location, has support for doing a final
@@ -259,8 +255,6 @@ class Scraper(object):
 
         return self
 
-
-
     def build_url_dates(self, pattern, ext, rename=None, date_type="Monthly"):
         """ Once the list of URL links has been populated this function
         will parse them to datetime objects.
@@ -278,19 +272,23 @@ class Scraper(object):
             self.match_demand_urls()
 
         else:
+            hrefs = [x['href'].replace('%2F', '/') for x in
+                     self.pattern_files]
 
             if date_type == "Monthly":
-                self.url_dates = [self.parse_monthly_dates(x['href'].replace('%2F', '/'), pattern,
-                                        ext, rename=rename) for
-                                        x in self.pattern_files]
 
-                self.url_base = {self.parse_monthly_dates(x['href'].replace('%2F', '/'), pattern,
-                                     ext, rename=rename): x['href'].replace('%2F', '/') for
-                                     x in self.pattern_files}
+                self.url_dates = [self.parse_monthly_dates(x, pattern,
+                                                           ext, rename=rename)
+                                  for x in hrefs]
+
+                self.url_base = {self.parse_monthly_dates(x, pattern,
+                                                          ext,
+                                                          rename=rename): x
+                                 for x in hrefs}
 
             elif date_type == "Daily":
-                all_dates = [self.parse_daily_dates(x['href'].replace('%2F', '/'), pattern, ext,
-                             rename=rename) for x in self.pattern_files]
+                all_dates = [self.parse_daily_dates(x, pattern, ext,
+                             rename=rename) for x in hrefs]
                 # Flatten out the dates
                 self.url_dates = list(itertools.chain.from_iterable(all_dates))
 
@@ -300,25 +298,21 @@ class Scraper(object):
                 # Later we filter out duplicate files when we download so
                 # this shouldn't be too much of an issue (hopefully)
                 self.url_base = {}
-                for x in self.pattern_files:
-                    url = x['href'].replace('%2F', '/')
-                    url_dates = [self.parse_daily_dates(x['href'].replace('%2F', '/'),
-                                        pattern, ext, rename=rename)]
+                for x in hrefs:
+                    url_dates = [self.parse_daily_dates(x, pattern, ext,
+                                                        rename=rename)]
                     dates = list(itertools.chain.from_iterable(url_dates))
                     for date in dates:
-                        self.url_base[date] = url
+                        self.url_base[date] = x
 
             elif date_type == "Yearly":
-                self.url_dates = [self.parse_yearly_dates(x["href"].replace('%2F', '/'), pattern,
+                self.url_dates = [self.parse_yearly_dates(x, pattern,
                                   ext, rename=rename) for x in
-                                  self.pattern_files]
+                                  hrefs]
 
-                self.url_base = {self.parse_yearly_dates(x['href'].replace('%2F', '/'), pattern,
-                                 ext, rename=rename): x['href'] for
-                                 x in self.pattern_files}
-
-
-
+                self.url_base = {self.parse_yearly_dates(x, pattern,
+                                 ext, rename=rename): x for
+                                 x in hrefs}
 
     def parse_monthly_dates(self, x, pattern, ext, rename=None):
         """ Take a url or filename string and get a monthly date out of it
@@ -342,19 +336,14 @@ class Scraper(object):
         except ValueError:
             print x
 
-
     def parse_yearly_dates(self, x, pattern, ext, rename=None):
-        """ Take a url or filename string to get a monthly date
-
-        """
+        """ Take a url or filename string to get a monthly date """
 
         datestring = self.scrub_string(x, pattern, ext, rename=rename)
         try:
             return datetime.datetime.strptime(datestring, "%Y")
         except ValueError:
             print x
-
-
 
     def parse_daily_dates(self, x, pattern, ext, rename=None,
                           date_format=None):
@@ -386,14 +375,14 @@ class Scraper(object):
         if len(datestring) == 6:
             date = datetime.datetime.strptime(datestring, "%Y%m")
             y, m = date.year, date.month
-            dates = [datetime.datetime(y, m, x) for x in range(1, calendar.monthrange(y, m)[1] + 1)]
+            dates = [datetime.datetime(y, m, i) for i in
+                     range(1, calendar.monthrange(y, m)[1] + 1)]
             return dates
 
         elif len(datestring) == 8:
             return [datetime.datetime.strptime(datestring, "%Y%m%d")]
         else:
             return []
-
 
     def scrub_string(self, x, pattern, ext, rename):
         """ Take a string and get it into a position where it could be
@@ -445,8 +434,8 @@ class Scraper(object):
 
         return datestring
 
-
-    def build_url_db(self, url, pattern, ext, match_type='href', rename=None, date_type="Monthly"):
+    def build_url_db(self, url, pattern, ext, match_type='href', rename=None,
+                     date_type="Monthly"):
         """ Hits a URL and gets all of the links from this URL then
         checks these against a pattern.
 
@@ -466,15 +455,13 @@ class Scraper(object):
         self.get_links(url)
 
         if match_type == "href":
-           self.pattern_files = [x for x in self.all_links if
+            self.pattern_files = [x for x in self.all_links if
                                   pattern in os.path.basename(x["href"])]
         elif match_type == 'text':
-           self.pattern_files = [x for x in self.all_links if
-                                    pattern in x.text]
-
+            self.pattern_files = [x for x in self.all_links if
+                                  pattern in x.text]
 
         self.build_url_dates(pattern, ext, rename=rename, date_type=date_type)
-
 
     def build_file_db(self, file_location, pattern, ext, rename=None,
                       date_type="Monthly"):
@@ -508,11 +495,12 @@ class Scraper(object):
 
         if date_type == "Monthly":
             flat_dates = [self.parse_monthly_dates(x, pattern, ext,
-                           rename=rename) for x in all_files]
+                                                   rename=rename)
+                          for x in all_files]
 
         elif date_type == "Daily":
             all_dates = [self.parse_daily_dates(x, pattern, ext, rename=rename)
-                     for x in all_files]
+                         for x in all_files]
             flat_dates = list(itertools.chain.from_iterable(all_dates))
 
         elif date_type == "Yearly":
@@ -524,11 +512,10 @@ class Scraper(object):
     def match_demand_urls(self):
         """ Parses the demand urls which are in a slightly unique format"""
 
-        self.url_dates = [self.parse_demand_date(x) for
-                          x in self.pattern_files]
-        self.url_base = {self.parse_demand_date(x): x['href'] for
-                         x in self.pattern_files}
-
+        self.url_dates = [self.parse_demand_date(x)
+                          for x in self.pattern_files]
+        self.url_base = {self.parse_demand_date(x): x['href']
+                         for x in self.pattern_files}
 
     def parse_demand_date(self, x):
         """ Nodal Demand is referenced by time of file creation, not
@@ -538,7 +525,6 @@ class Scraper(object):
         string_rep = " ".join([y for y in x.text.split(' ') if y != ''])
         return datetime.datetime.strptime(string_rep, "%d %B %Y")
 
-
     def hit_historic_nodal_demand(self):
         """ Historic nodal demand has different structure"""
 
@@ -547,8 +533,6 @@ class Scraper(object):
         all_urls = [os.path.join(self.base_url, 'comitFta', x['href']) for
                     x in month_links]
         return all_urls
-
-
 
     def set_parameters(self, seed):
         """ Parse a configuration file for the seed (loaded as a dictionary
@@ -597,7 +581,6 @@ class Scraper(object):
         # Quick check to ensure the directory exists.
         if not os.path.isdir(self.file_location):
             os.mkdir(self.file_location)
-
 
     def scrape_seed(self, seed):
         """ Using a Seed which refers to a series of configuration values
@@ -656,7 +639,6 @@ class Scraper(object):
 
         print "Completed Scrape for %s" % seed
 
-
     def hit_all_seeds(self):
         """ Hits all of the relevant (recent) Seeds"""
 
@@ -668,4 +650,3 @@ class Scraper(object):
 
 if __name__ == '__main__':
     pass
-
