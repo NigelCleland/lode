@@ -1,51 +1,22 @@
 #!/usr/bin/python
 import psycopg2 as pg2
-import simplejson
-import pandas
 import pandas.io.sql as psql
 import pandas as pd
 import os
 import shutil
 import glob
-import re
 import datetime
 from collections import defaultdict
 from dateutil.parser import parse
 
+from lode.utilities.util import (parse_date, load_config,
+                                 get_file_year_str, meta_path)
+
+from lode.database.helpers import (check_csv_headers,
+                                   strip_fileendings)
 
 from itertools import izip
-
 from OfferPandas import Frame
-
-# Do some wizardry to get the location of the config file
-file_path = os.path.abspath(__file__)
-module_path = os.path.split(os.path.split(file_path)[0])[0]
-config_name = os.path.join(module_path, 'config.json')
-
-# Get the meta_information path
-meta_path = os.path.join(module_path, "static/nodal_metadata.csv")
-
-
-def list_databases():
-    """ Helper function to list the different databases that can be connected
-    to, useful if running in an interaction session, saves hunting through
-    the config
-    """
-    with open(config_name, 'rb') as f:
-        config = simplejson.load(f)
-
-    databases = [x for x in config.keys() if "schemas" in config[x]]
-    return databases
-
-
-def list_tables(database):
-    """ Helper function to list the tables associated with a particular DB"""
-    with open(config_name, 'rb') as f:
-        config = simplejson.load(f)
-
-    tables = [x for x in config[database]['schemas']]
-
-    return tables
 
 
 class NZEMDB(object):
@@ -70,24 +41,9 @@ class NZEMDB(object):
         """ This permits hot loading of the config file instead of linking
         it to only be initialised on startup
         """
-        with open(config_name, 'rb') as f:
-            self.CONFIG = simplejson.load(f)
+        self.CONFIG = load_config()
 
         return self
-
-    def get_year(self, fName):
-        """ Parse a filename to get the year it is in """
-        year = re.findall(r"\d+", os.path.basename(fName))[0]
-
-        # Quick check as the year may be raw
-        if len(year) == 4:
-            return year
-        elif len(year) == 6:
-            date = datetime.datetime.strptime(year, "%Y%m")
-        else:
-            date = datetime.datetime.strptime(year, "%Y%m%d")
-
-        return date.strftime("%Y")
 
     def insert_to_database(self, query, csvfile, tabname):
         try:
@@ -114,7 +70,7 @@ class NZEMDB(object):
                 print e
             except pg2.DataError as e:
                 print e
-                self.strip_fileendings(homeName)
+                strip_fileendings(homeName)
                 self.execute_and_commit_sql(query)
 
             os.remove(homeName)
@@ -123,20 +79,17 @@ class NZEMDB(object):
 
         # Check the Schemas for the split year:
         if self.schemas[table]['split_by_year']:
-            year = self.get_year(csvfile)
+            year = get_file_year_str(csvfile)
             table_name = "%s_%s" % (table, year)
         else:
             table_name = table
-        # year = self.get_year(csvfile)
-        # table_year = "%s_%s" % (table, year)
-        #table_headers = self.get_column_names(table_year)
 
         table_headers = self.get_column_names(table_name)
         insert_headers = ",".join([x[0] for x in
                                    table_headers if "key" not in x[0]])
         tabname = "%s(%s)" % (table_name, insert_headers)
 
-        existing_headers = self.check_csv_headers(csvfile, table_headers)
+        existing_headers = check_csv_headers(csvfile, table_headers)
 
         if existing_headers:
             query = """COPY %s FROM '%s' DELIMITER ',' CSV HEADER;
@@ -157,16 +110,6 @@ class NZEMDB(object):
         with open(fName, 'wb') as f:
             for row in data_new:
                 f.write(row)
-
-    def check_csv_headers(self, csvfile, table_headers):
-
-        with open(csvfile, 'rb') as f:
-            header = f.readline()
-
-        if table_headers[1][0] not in header.lower():
-            return False
-
-        return True
 
     def execute_and_commit_sql(self, sql):
 
@@ -220,9 +163,6 @@ class NZEMDB(object):
         with pg2.connect(self.conn_string) as conn:
             yield psql.read_sql(sql, conn)
 
-    def columnise_trading_periods(self, df):
-        pass
-
     def insert_many_csv(self, table, folder):
 
         allcsv_files = glob.glob(folder + "/*.csv")
@@ -230,9 +170,6 @@ class NZEMDB(object):
             print "Attempting to load %s" % f
             self.insert_from_csv(table, f)
             print "%s succesfully loaded to %s" % (f, table)
-
-    def update_table(self, table):
-        pass
 
     def list_all_tables(self):
         return self.ex_sql_and_fetch("SELECT * FROM pg_catalog.pg_tables")
@@ -464,8 +401,8 @@ class NZEMDB(object):
 
     def _yearly_sql_dates(self, begin_date, end_date, master_table, date_col):
         # Parse the dates as they're probably strings
-        begin_date = self._parse_date(begin_date)
-        end_date = self._parse_date(end_date)
+        begin_date = parse_date(begin_date)
+        end_date = parse_date(end_date)
 
         # Set up dummy strings
         jan1, dec31 = "01-01-%s", "31-01-%s"
@@ -494,8 +431,8 @@ class NZEMDB(object):
         query_string = """SELECT * FROM %s_%s WHERE %s BETWEEN '%s' AND '%s'"""
 
         # Parse the dates as they're probably strings
-        begin_date = self._parse_date(begin_date)
-        end_date = self._parse_date(end_date)
+        begin_date = parse_date(begin_date)
+        end_date = parse_date(end_date)
 
         month_range = list(pd.date_range(begin_date, end_date, freq="M"))
         month_range_p1 = [x + datetime.timedelta(days=1) for x in
@@ -515,14 +452,6 @@ class NZEMDB(object):
             end = e.strftime('%d-%m-%Y')
 
             yield query_string % (master_table, s.year, date_col, beg, end)
-
-    def _parse_date(self, x):
-
-        allowable_dates = (datetime.datetime, pandas.tslib.Timestamp,
-                           datetime.date)
-        if type(x) in allowable_dates:
-            return x
-        return parse(x)
 
     def add_equality_constraint(self, column, values):
 
