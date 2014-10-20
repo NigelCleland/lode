@@ -14,6 +14,8 @@ from collections import defaultdict
 from dateutil.parser import parse
 import datetime
 
+from itertools import izip
+
 from OfferPandas import Frame
 
 # Do some wizardry to get the location of the config file
@@ -217,11 +219,11 @@ class NZEMDB(object):
 
 
     def query_to_df(self, sql):
+        """ Use a Generator here as we're Lazy """
 
         with pg2.connect(self.conn_string) as conn:
-            df = psql.read_sql(sql, conn)
+            yield psql.read_sql(sql, conn)
 
-        return df
 
 
     def columnise_trading_periods(self, df):
@@ -429,7 +431,7 @@ class NZEMDB(object):
 
     def create_date_limited_sql(self, master_table, dates=None,
                                 begin_date=None, end_date=None,
-                                date_col="trading_date"):
+                                date_col="trading_date", range_break="Year"):
         all_queries = []
         # If passing a single date
         if dates:
@@ -459,27 +461,85 @@ class NZEMDB(object):
             dt_begin = parse(begin_date, dayfirst=True)
             dt_end = parse(end_date, dayfirst=True)
 
-            # Generic Year Begin and Year End values
-            ybegin, yend = "01-01-%s", "31-12-%s"
+            if range_break == "Year":
 
-            # Iterate through the years creating a query for each year.
-            # Check if years match a beginning or ending date, otherwise
-            # Use the generic 1st January and 31st December dates
-            for year in range(dt_begin.year, dt_end.year+1):
-                if year == dt_begin.year:
-                    beg = dt_begin.strftime('%d-%m-%Y')
-                else:
-                    beg = ybegin % year
-                if year == dt_end.year:
-                    ed = dt_end.strftime('%d-%m-%Y')
-                else:
-                    ed = yend % year
+                # Generic Year Begin and Year End values
+                ybegin, yend = "01-01-%s", "31-12-%s"
 
-                SQL = """SELECT * FROM %s_%s WHERE %s BETWEEN '%s' AND '%s'""" % (master_table, year, date_col, beg, ed)
+                # Iterate through the years creating a query for each year.
+                # Check if years match a beginning or ending date, otherwise
+                # Use the generic 1st January and 31st December dates
+                for year in range(dt_begin.year, dt_end.year+1):
+                    if year == dt_begin.year:
+                        beg = dt_begin.strftime('%d-%m-%Y')
+                    else:
+                        beg = ybegin % year
+                    if year == dt_end.year:
+                        ed = dt_end.strftime('%d-%m-%Y')
+                    else:
+                        ed = yend % year
 
-                all_queries.append(SQL)
+                    SQL = """SELECT * FROM %s_%s WHERE %s BETWEEN '%s' AND '%s'""" % (master_table, year, date_col, beg, ed)
+
+                    all_queries.append(SQL)
+
+            elif range_break == "Month":
+
+               return list(self._monthly_sql_dates(begin_date, end_date,
+                                                   master_table, date_col)
+                           )
+
+            else:
+                raise ValueError("Range Breaks for %s have not been implemented, try 'Year'" % range_break)
 
         return all_queries
+
+
+    def _yearly_dates(self, begin_date, end_date, master_table, date_col):
+        # Parse the dates as they're probably strings
+        begin_date = self._parse_date(begin_date)
+        end_date = self._parse_date(end_date)
+
+        pass
+
+
+    def _monthly_sql_dates(self, begin_date, end_date, master_table, date_col):
+
+        # Parse the dates as they're probably strings
+        begin_date = self._parse_date(begin_date)
+        end_date = self._parse_date(end_date)
+
+        month_range = list(pd.date_range(begin_date, end_date, freq="M"))
+        month_range_p1 = [x + datetime.timedelta(days=1) for x in month_range[:-1]]
+
+        if month_range[-1] == end_date:
+            end_dates = month_range
+        else:
+            end_dates = month_range + [end_date]
+
+        # Can I do this functionally? I don't want to mutate the data
+        # structures
+        begin_dates = list(month_range_p1)
+        begin_dates.insert(0, begin_date)
+
+        print begin_dates
+
+
+        for s, e in izip(begin_dates, end_dates):
+            beg = s.strftime('%d-%m-%Y')
+            end = e.strftime('%d-%m-%Y')
+
+            yield """SELECT * FROM %s_%s WHERE %s BETWEEN '%s' AND '%s' """ % (master_table, s.year, date_col, beg, end)
+
+
+    def _parse_date(self, x):
+
+        allowable_dates = (datetime.datetime, pandas.tslib.Timestamp,
+                           datetime.date)
+        if type(x) in allowable_dates:
+            return x
+        return parse(x)
+
 
 
 
