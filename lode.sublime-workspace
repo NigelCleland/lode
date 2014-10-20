@@ -519,21 +519,17 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "lode/database/NZEMDB.py",
-			"settings":
-			{
-				"buffer_size": 21254,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 75.0,
+		"height": 54.0,
 		"selected_items":
 		[
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
 			[
 				"view side",
 				"View: Toggle Side Bar"
@@ -557,10 +553,6 @@
 			[
 				"pandoc",
 				"Pandoc"
-			],
-			[
-				"instal",
-				"Package Control: Install Package"
 			],
 			[
 				"install",
@@ -628,6 +620,11 @@
 	},
 	"file_history":
 	[
+		"/home/ncle778/python/lode/lode/database/NZEMDB.py",
+		"/home/ncle778/python/lode/lode/scrapers/Scraper.py",
+		"/home/ncle778/python/lode/lode/__init__.py",
+		"/home/ncle778/python/lode/lode/mungers/convertors.py",
+		"/home/ncle778/.config/sublime-text-2/Packages/Python Flake8 Lint/Flake8Lint.sublime-settings",
 		"/home/ncle778/latex/Thesis/tex/intro_and_literature.tex",
 		"/home/ncle778/latex/Thesis/main.tex",
 		"/home/ncle778/latex/Thesis/tex/constraints.tex",
@@ -750,12 +747,7 @@
 		"/home/nigel/functionallymad/content/pages/nutrition.md",
 		"/home/nigel/latex/getting_things_done/tex/visualisation.tex",
 		"/home/nigel/latex/equilibrium_models/tex/conclusion.tex",
-		"/home/nigel/latex/reserve_constraints/IEEE_version.tex",
-		"/home/nigel/latex/equilibrium_models/tex/competitive_transmission.tex",
-		"/home/nigel/latex/equilibrium_models/tex/introduction.tex",
-		"/home/nigel/latex/equilibrium_models/tex/abstract.tex",
-		"/home/nigel/latex/equilibrium_models/tex/background.tex",
-		"/home/nigel/functionallymad/requirements.txt"
+		"/home/nigel/latex/reserve_constraints/IEEE_version.tex"
 	],
 	"find":
 	{
@@ -773,6 +765,10 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"final_location",
+			"execute_and_fetchall_sql",
+			"SQL_String",
+			"self",
 			"date_limited",
 			"cite",
 			"caret",
@@ -896,11 +892,7 @@
 			"rdict",
 			"filt_old",
 			"rline",
-			"capline",
-			"self",
-			"http://books.google.com/books?h",
-			"Google",
-			"ur"
+			"capline"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -928,37 +920,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "lode/database/NZEMDB.py",
-					"settings":
-					{
-						"buffer_size": 21254,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								17626,
-								17625
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 7539.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
