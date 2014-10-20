@@ -437,73 +437,76 @@ class NZEMDB(object):
         if dates:
             if type(dates) == str:
                 dt = parse(dates)
-                SQL = """ SELECT * FROM %s_%s WHERE %s='%s'""" % (
-                    master_table, dt.year, date_col, dt.strftime('%d-%m-%Y'))
-
-                all_queries.append(SQL)
+                return [""" SELECT * FROM %s_%s WHERE %s='%s'""" % (
+                    master_table, dt.year, date_col, dt.strftime('%d-%m-%Y'))]
 
             elif hasattr(dates, '__iter__'):
-                dts = [parse(x, dayfirst=True) for x in dates]
-                # Map the specific dates to the specific years
-                years_dict = defaultdict(list)
-                for dt in dts:
-                    years_dict[dt.year].append(dt)
-
-                for year in years_dict:
-                    strings = "','".join([x.strftime("%d-%m-%Y") for x in years_dict[year]])
-                    date_string = "('%s')" % strings
-                    SQL = """ SELECT * FROM %s_%s WHERE %s in %s""" % (master_table, year, date_col, date_string)
-
-                    all_queries.append(SQL)
+                return list(self._singular_sql_dates(dates, master_table,
+                                                     date_col))
 
         # Work with Date Ranges
         else:
-            dt_begin = parse(begin_date, dayfirst=True)
-            dt_end = parse(end_date, dayfirst=True)
-
             if range_break == "Year":
-
-                # Generic Year Begin and Year End values
-                ybegin, yend = "01-01-%s", "31-12-%s"
-
-                # Iterate through the years creating a query for each year.
-                # Check if years match a beginning or ending date, otherwise
-                # Use the generic 1st January and 31st December dates
-                for year in range(dt_begin.year, dt_end.year+1):
-                    if year == dt_begin.year:
-                        beg = dt_begin.strftime('%d-%m-%Y')
-                    else:
-                        beg = ybegin % year
-                    if year == dt_end.year:
-                        ed = dt_end.strftime('%d-%m-%Y')
-                    else:
-                        ed = yend % year
-
-                    SQL = """SELECT * FROM %s_%s WHERE %s BETWEEN '%s' AND '%s'""" % (master_table, year, date_col, beg, ed)
-
-                    all_queries.append(SQL)
+                return list(self._yearly_sql_dates(begin_date, end_date,
+                                                   master_table, date_col))
 
             elif range_break == "Month":
 
                return list(self._monthly_sql_dates(begin_date, end_date,
-                                                   master_table, date_col)
-                           )
+                                                   master_table, date_col))
 
             else:
                 raise ValueError("Range Breaks for %s have not been implemented, try 'Year'" % range_break)
 
         return all_queries
 
+    def _singular_sql_dates(self, dates, master_table, date_col):
+        dts = [parse(x, dayfirst=True) for x in dates]
+        # Map the specific dates to the specific years
+        years_dict = defaultdict(list)
+        for dt in dts:
+            years_dict[dt.year].append(dt)
 
-    def _yearly_dates(self, begin_date, end_date, master_table, date_col):
+        for year in years_dict:
+            strings = "','".join([x.strftime("%d-%m-%Y") for x in years_dict[year]])
+            date_string = "('%s')" % strings
+            query_string = """ SELECT * FROM %s_%s WHERE %s in %s"""
+            SQL = query_string % (master_table, year, date_col, date_string)
+
+            yield SQL
+
+
+    def _yearly_sql_dates(self, begin_date, end_date, master_table, date_col):
         # Parse the dates as they're probably strings
         begin_date = self._parse_date(begin_date)
         end_date = self._parse_date(end_date)
 
-        pass
+        # Set up dummy strings
+        jan1, dec31 = "01-01-%s", "31-01-%s"
+        query_string = """SELECT * FROM %s_%s WHERE %s BETWEEN '%s' AND '%s'"""
+
+        # Return the first string
+        yield query_string % (master_table, begin_date.year, date_col,
+                            begin_date.strftime('%d-%m-%Y'),
+                            dec31 % begin_date.year)
+
+        # Yield the intermediate dates if any
+        years = range(begin_date.year+1, end_date.year)
+        if len(years) > 0:
+            for year in years:
+                yield query_string % (master_table, year, date_col,
+                            jan1 % year, dec31 % year)
+
+        # Yield the last date
+        if end_date.year != begin_date.year:
+            yield query_string % (master_table, begin_date.year, date_col,
+                            jan1 % end_date.year,
+                            end_date.strftime('%d-%m-%Y'))
 
 
     def _monthly_sql_dates(self, begin_date, end_date, master_table, date_col):
+
+        query_string = """SELECT * FROM %s_%s WHERE %s BETWEEN '%s' AND '%s'"""
 
         # Parse the dates as they're probably strings
         begin_date = self._parse_date(begin_date)
@@ -518,18 +521,14 @@ class NZEMDB(object):
             end_dates = month_range + [end_date]
 
         # Can I do this functionally? I don't want to mutate the data
-        # structures
-        begin_dates = list(month_range_p1)
-        begin_dates.insert(0, begin_date)
-
-        print begin_dates
-
+        # structures, currently copying the list
+        begin_dates = [begin_date] + month_range_p1
 
         for s, e in izip(begin_dates, end_dates):
             beg = s.strftime('%d-%m-%Y')
             end = e.strftime('%d-%m-%Y')
 
-            yield """SELECT * FROM %s_%s WHERE %s BETWEEN '%s' AND '%s' """ % (master_table, s.year, date_col, beg, end)
+            yield query_string % (master_table, s.year, date_col, beg, end)
 
 
     def _parse_date(self, x):
