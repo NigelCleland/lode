@@ -3,7 +3,7 @@ useful state. E.g. consistent naming schema and values with other units.
 """
 
 import pandas as pd
-import numpy as np
+
 
 def convert_grid_values(filename):
 
@@ -41,7 +41,7 @@ def convert_grid_values(filename):
     grouped.index.names = index_names
 
     # Conver to MW from kWh
-    conv_ratio = 1./500. # 1 KWh = 0.002 MW average
+    conv_ratio = 1. / 500.  # 1 KWh = 0.002 MW average
     grouped = grouped * conv_ratio
 
     # Name the series
