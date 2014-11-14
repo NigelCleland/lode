@@ -24,6 +24,10 @@ def parse_date(x, dayfirst=True):
             return datetime.datetime.fromordinal(x.toordinal())
         return x
 
+    # Sometimes dates are ints for weird reasons which fails with parse
+    if type(x) == int:
+        x = str(x)
+
     return parse(x, dayfirst=True)
 
 
@@ -50,3 +54,30 @@ def get_file_year_str(x):
         raise ValueError("Don't recognise the year %s" % year)
 
     return date.strftime("%Y")
+
+
+def create_timestamp(x, offset=30):
+    """ Create a Timestamp from an object, accepts different formats:
+        1. Tuple of date + period
+        2. Int or String of Trading Period ID
+    """
+
+    # Object is has a date and period
+    if hasattr(x, '__iter__'):
+        date, period = x
+        parsed_date = parse_date(date)
+    else:
+        # Ensure it is an integer
+        tpid = int(x)
+        parsed_date, period = parse_date(tpid / 100), tpid % 100
+
+    # Fucking daylight saving
+    if period > 48:
+        period = 1
+
+    # Minutes for the end of the trading period
+    minutes = period * 30 - offset
+
+    # Create the timestamp
+
+    return parsed_date + datetime.timedelta(minutes=minutes)

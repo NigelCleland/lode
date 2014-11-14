@@ -53,3 +53,32 @@ def test_get_file_year():
 
     # Should raise a Value Error on funky dates
     assert_raises(ValueError, util.get_file_year_str, f4)
+
+
+def test_create_timestamp():
+
+    t1 = ("20140524", 33)
+    t2 = (20130517, 18)
+    t3 = "2014032833"
+    t4 = 2014032817
+    t5 = (datetime.date(2013, 6, 4), 18)
+
+    r1 = util.create_timestamp(t1)
+    r2 = util.create_timestamp(t2)
+    r3 = util.create_timestamp(t3)
+    r4 = util.create_timestamp(t4)
+    r5 = util.create_timestamp(t5)
+
+    assert r1 == datetime.datetime(2014, 5, 24, 16, 0)
+    assert r2 == datetime.datetime(2013, 5, 17, 8, 30)
+    assert r3 == datetime.datetime(2014, 3, 28, 16, 0)
+    assert r4 == datetime.datetime(2014, 3, 28, 8, 0)
+    assert r5 == datetime.datetime(2013, 6, 4, 8, 30)
+
+    # Test the different offsets
+
+    ro1 = util.create_timestamp(t1, offset=0)
+    ro2 = util.create_timestamp(t1, offset=15)
+
+    assert ro1 == datetime.datetime(2014, 5, 24, 16, 30)
+    assert ro2 == datetime.datetime(2014, 5, 24, 16, 15)
