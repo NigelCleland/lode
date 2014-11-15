@@ -79,6 +79,29 @@ def test_create_timestamp():
 
     ro1 = util.create_timestamp(t1, offset=0)
     ro2 = util.create_timestamp(t1, offset=15)
+    ro3 = util.create_timestamp(t1, offset=-15)
 
     assert ro1 == datetime.datetime(2014, 5, 24, 16, 30)
     assert ro2 == datetime.datetime(2014, 5, 24, 16, 15)
+    assert ro3 == datetime.datetime(2014, 5, 24, 16, 45)
+
+
+def test_create_tpid():
+
+    t1 = "2014052733"
+    t2 = 2014052733
+    t3 = ("20140527", 33)
+    t4 = datetime.datetime(2014, 5, 27, 5, 30)
+    t5 = datetime.datetime(2014, 5, 27, 5, 15)
+
+    r1 = util.create_tpid(t1)
+    r2 = util.create_tpid(t2)
+    r3 = util.create_tpid(t3)
+    r4 = util.create_tpid(t4)
+    r5 = util.create_tpid(t5)
+
+    assert r1 == "2014052733"
+    assert r2 == "2014052733"
+    assert r3 == "2014052733"
+    assert r4 == "2014052712"
+    assert r5 == "2014052711"

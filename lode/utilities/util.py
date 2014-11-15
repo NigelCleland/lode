@@ -60,6 +60,25 @@ def create_timestamp(x, offset=30):
     """ Create a Timestamp from an object, accepts different formats:
         1. Tuple of date + period
         2. Int or String of Trading Period ID
+
+    These timestamps have an offset associated which may be used, By default
+    it is set to the beginning of the period. Other possible value are
+        0: End of the period
+        15: Middle of the period
+        30: Beginning of the period
+
+    Usage:
+    ------
+
+    ts = create_timestamp("2014051733") # Accepts trading period ID
+    ts = create_timestamp(2014051733) # Accepts integers
+
+    # Accepts iterables of date, period combinations
+    ts = create_timestamp(("2014-05-17", 44))
+
+    # Dates can be datetime objects
+    ts = create_timestamp((datetime.date(2014, 5, 17), 14))
+
     """
 
     # Object is has a date and period
@@ -81,3 +100,37 @@ def create_timestamp(x, offset=30):
     # Create the timestamp
 
     return parsed_date + datetime.timedelta(minutes=minutes)
+
+
+def create_tpid(x):
+    """ General purpose utility function to create a Trading Period ID
+    A TPID has the general format YYYYMMDDPP and can be useful in some
+    situations as a method of merging entries in databases:
+
+    Usage:
+    ------
+    tpid = create_tpid(datetime_object)
+    tpid = create_tpid(("date", period))
+
+    """
+
+    # Check if it is a datetime object
+    if type(x) in (datetime.datetime, pandas.tslib.Timestamp):
+        date = x
+        # Get the trading period
+        period = 1 + 2 * x.hour + (x.minute / 30)
+    # Check if it is a tuple
+    elif hasattr(x, '__iter__'):
+        # Note force the int on the period, type errors yo
+        date, period = parse_date(x[0]), int(x[1])
+    else:
+        try:
+            if len(str(x)) == 10:
+                return str(x)
+        except:
+            print "Not sure what this is"
+
+    # Create the trading period ID and return it
+    tpid = date.strftime('%Y%m%d') + '%02d' % period
+
+    return tpid

@@ -12,8 +12,8 @@ from dateutil.parser import parse
 from lode.utilities.util import (parse_date, load_config,
                                  get_file_year_str, meta_path)
 
-from lode.database.helpers import (check_csv_headers,
-                                   strip_fileendings)
+from lode.database.utilities import (check_csv_headers,
+                                     strip_fileendings)
 
 from itertools import izip
 from OfferPandas import Frame
