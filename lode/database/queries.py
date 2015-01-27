@@ -1,49 +1,30 @@
-def add_equality_constraint(column, values):
-
-    if not hasattr(values, '__iter__'):
-        return add_single_selection_constraint(column, values)
-    else:
-        return add_multiple_selection_constraint(column, values)
+from helpers import check_required_range, check_optional_range
+import query_builders as qb
 
 
-def add_exclusion_constraint(column, values):
+def query_nodal_price(begin_date=None, end_date=None, dates=None,
+                      begin_period=None, end_period=None, periods=None,
+                      minimum_price=None, maximum_price=None,
+                      apply_meta=False, database=None):
+    """
 
-    if not hasattr(values, '__iter__'):
-        return add_single_exclusion_constraint(column, values)
-    else:
-        return add_multiple_exclusion_constraint(column, values)
+    """
 
+    # Set Database to the default nodal prices one
+    if database is None:
+        database = 'nodal_database'
 
-def add_minimum_constraint(column, value):
-    return """ AND %s >= '%s'""" % (column, value)
+    # Check the dates
+    check_required_range(dates, begin_date, end_date)
+    check_optional_range(periods, begin_period, end_period)
 
+    all_queries = qb.create_date_limited_sql("nodal_prices", dates=dates,
+                                             begin_date=begin_date,
+                                             end_date=end_date,
+                                             date_col="Trading_date")
 
-def add_maximum_constraint(column, value):
-    return """ AND %s <= '%s'""" % (column, value)
+    return all_queries
 
-
-def add_range_constraint(column, begin, end):
-    return """ AND %s BETWEEN '%s' AND '%s'""" % (column, begin, end)
-
-
-def add_single_selection_constraint(column, value):
-    return """ AND %s='%s'""" % (column, value)
-
-
-def add_multiple_selection_constraint(column, values):
-    joined = "','".join(values)
-    jvalues = "('%s')" % joined
-    return """ AND %s IN %s""" % (column, jvalues)
-
-
-def add_single_exclusion_constraint(column, value):
-    return """ AND %s!='%s'""" % (column, value)
-
-
-def add_multiple_exclusion_constraint(column, values):
-    joined = "','".join(values)
-    jvalues = "('%s')" % joined
-    return """ AND %s NOT IN %s""" % (column, jvalues)
 
 if __name__ == '__main__':
     pass
