@@ -161,7 +161,7 @@ class NZEMDB(object):
         """ Use a Generator here as we're Lazy """
 
         with pg2.connect(self.conn_string) as conn:
-            yield psql.read_sql(sql, conn)
+            return psql.read_sql(sql, conn)
 
     def insert_many_csv(self, table, folder):
 
