@@ -1,6 +1,7 @@
 import psycopg2 as pg2
-from lode.utilities.util import load_config
+from lode.utilities.util import load_config, meta_path
 import pandas.io.sql as psql
+import pandas as pd
 
 
 def list_databases():
@@ -100,7 +101,9 @@ def strip_fileendings(fName):
 
 def check_required_range(specific=None, begin=None, end=None):
     """
-
+    Raise ValueErrors if neither a range nor a specific instance are
+    passed. This ensures that you do not try to query the entire database
+    accidentally which would wipe out the machine.
     """
 
     if not specific and not (begin and end):
@@ -115,7 +118,9 @@ def check_required_range(specific=None, begin=None, end=None):
 
 def check_optional_range(specific=None, begin=None, end=None):
     """
-
+    Specific instances and range filters conflict with one another.
+    This ensure you only pass one and that you pass the correct beginning
+    and end point of a range.
     """
     if specific and (begin and end):
         raise ValueError('Cannot pass both a range and specific')
@@ -125,6 +130,19 @@ def check_optional_range(specific=None, begin=None, end=None):
 
 
 def return_connection(db_key):
+    """
+    Take a database name and return connection information from the
+    configuration file as a string which may be used to generate a psycopg
+    connection:
+
+    Parameters:
+    -----------
+    db_key: String with the database key name
+
+    Returns:
+    --------
+    string containing the connection information for the database
+    """
 
     config = load_config()
 
@@ -138,6 +156,9 @@ def return_connection(db_key):
 
 
 def ex_sql_and_fetch(db, sql):
+    """
+
+    """
     conn_string = return_connection(db)
     with pg2.connect(conn_string) as conn:
         with conn.cursor() as curs:
@@ -148,6 +169,9 @@ def ex_sql_and_fetch(db, sql):
 
 
 def execute_and_commit_sql(db, sql):
+    """
+
+    """
     conn_string = return_connection(db)
     with pg2.connect(conn_string) as conn:
         with conn.cursor() as curs:
@@ -156,7 +180,9 @@ def execute_and_commit_sql(db, sql):
 
 
 def get_column_names(db, table):
+    """
 
+    """
     sql = """SELECT column_name FROM information_schema.columns
              WHERE table_schema='public' AND table_name='%s'""" % table
 
@@ -164,16 +190,65 @@ def get_column_names(db, table):
 
 
 def query_to_df(db, sql):
-    """ Use a Generator here as we're Lazy """
+    """
+    Query a particular database using a predefined SQL string
+
+    Parameters:
+    -----------
+    db: String with the name of the database
+    sql: The SQL to be run
+
+    Returns:
+    --------
+    DataFrame: Object containing the results of the query
+    """
     conn_string = return_connection(db)
     with pg2.connect(conn_string) as conn:
-        yield psql.read_sql(sql, conn)
+        return psql.read_sql(sql, conn)
+
+
+def multi_query(db, queries):
+    """
+    Run multiple SQL queries on the same database and concatenate the results
+    together into the same DataFrame
+
+    Parameters:
+    -----------
+    db: The Database to run the queries on (string)
+    queries: Iterable object containing the SQL queries as strings
+
+    Returns:
+    --------
+    DataFrame: Pandas DataFrame containing the information concatenated
+               together
+    """
+    return pd.concat((query_to_df(db, q) for q in queries), ignore_index=True)
 
 
 def list_all_tables(db):
     return ex_sql_and_fetch(db, "SELECT * FROM pg_catalog.pg_tables")
 
 
+def merge_meta(df, col='demand'):
+    """
+    Apply meta information to a specific dataframe and remove all periods where
+    no existing data was present before hand in a specific column. An outer
+    join is used as the meta data may be incomplete.
+
+    Parameters:
+    -----------
+    df: DataFrame to apply the meta information to
+    col: What column to remove data based on, e.g. Nan values
+
+    Returns:
+    --------
+    DataFrame: The existing df with meta information applied where possible.
+    """
+    meta_info = pd.read_csv(meta_path)
+    df = df.merge(meta_info, left_on="node", right_on="Node",
+                  how='outer')
+    return df.ix[df[col].dropna().index]
+
+
 if __name__ == '__main__':
     pass
-
