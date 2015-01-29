@@ -151,25 +151,48 @@ def return_connection(db_key):
     host = "localhost"
     password = config[db_key]["database_pass"]
 
-    return """dbname=%s user=%s password=%s host=%s
-           """ % (db, user, password, host)
+    return """dbname=%s user=%s password=%s host=%s""" % (db, user, password,
+                                                          host)
 
 
-def ex_sql_and_fetch(db, sql):
+def ex_sql_and_fetch(db, sql, result_num=None):
     """
+    Execute an SQL query and return the results, optionally only
+    return a subset if desired via the result_num keyword argument
+
+    Parameters:
+    -----------
+    db: Database to connect to (string)
+    sql: SQL statement to execute
+    result_num: Optional, number of results to fetch, defaults to all
+
+    Returns:
+    --------
+    records: The Database SQL query results
 
     """
     conn_string = return_connection(db)
     with pg2.connect(conn_string) as conn:
         with conn.cursor() as curs:
             curs.execute(sql)
-            records = curs.fetchall()
+            if type(result_num) is int:
+                records = curs.fetchmany(result_num)
+            else:
+                records = curs.fetchall()
 
     return records
 
 
 def execute_and_commit_sql(db, sql):
     """
+    Create a connection to the Database and then execute a specific SQL
+    query upon it. The query is automatically committed to the Database
+    and thus should be used with care.
+
+    Parameters:
+    -----------
+    db: What Database to connect to
+    sql: What SQL query to execute
 
     """
     conn_string = return_connection(db)
@@ -226,7 +249,25 @@ def multi_query(db, queries):
 
 
 def list_all_tables(db):
-    return ex_sql_and_fetch(db, "SELECT * FROM pg_catalog.pg_tables")
+    """
+    This function lists all of the user created tables from the configuration
+    which exist. It queries all of the tables in the database as well as what
+    should exist from the configuration file and compares the two.
+
+    Parameters:
+    -----------
+    db: What database should be queried
+
+    """
+    # Get the tables which exist in the database
+    db_tables =  ex_sql_and_fetch(db, "SELECT * FROM pg_catalog.pg_tables")
+    tables = [t[1] for t in db_tables]
+    # Get the master tables from the Config
+    config_tables = load_config()[db]['schemas'].keys()
+
+    # Check to eliminate tables which don't exist from the Config
+    relevant = [t for t in tables for c in config_tables if c in t]
+    return relevant
 
 
 def merge_meta(df, col='demand'):
@@ -248,6 +289,53 @@ def merge_meta(df, col='demand'):
     df = df.merge(meta_info, left_on="node", right_on="Node",
                   how='outer')
     return df.ix[df[col].dropna().index]
+
+
+def drop_table(database, table):
+    """
+    Drop a specific table from the Database, this will not work with the
+    "Master Tables" and instead a specific table name must be called
+    as the argument. Will raise a print warning but will not introduce
+    any other warnings.
+
+    Parameters:
+    -----------
+    database: Database to drop the table from (string)
+    table: Which table to drop (string)
+
+    """
+    sql = """DROP TABLE %s""" % table
+    print "Dropping Table %s from the Database %s" % (table, database)
+    execute_and_commit_sql(database, sql)
+    return None
+
+def drop_all_tables(database, master_table):
+    """
+    This will drop all of the tables which match the base master table format.
+    E.g. for all of the Energy Offer tables this will drop all of them.
+    It is quite a useful function if you want to start from scratch on a DB
+    and load all of the data in again.
+
+    Parameters:
+    -----------
+    database: The Database to drop the table from
+    master_table: What tables to drop.
+    """
+
+    config = load_config()
+    table_info = config[database]['schemas'][master_table]
+
+    if table_info["split_by_year"]:
+        for year in table_info['split_years']:
+            table_name = "_".join([master_table, str(year)])
+            drop_table(database, table_name)
+
+    # If there is not split by year configuration default to dropping the
+    # master table as the name should be the name of the table in the DB
+    else:
+        drop_table(database, master_table)
+
+    return None
 
 
 if __name__ == '__main__':

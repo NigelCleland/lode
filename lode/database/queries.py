@@ -1,8 +1,8 @@
-from helpers import (check_required_range, check_optional_range,
-                     multi_query, merge_meta)
+from lode.database.utilities import (
+        check_required_range, check_optional_range, multi_query, merge_meta)
 import query_builders as qb
 import warnings
-from OfferPandas import Frame
+
 
 
 def query_nodal_price(begin_date=None, end_date=None, dates=None,
@@ -203,6 +203,10 @@ def query_offer(offer_type, dates=None, begin_date=None, end_date=None,
                 as_offerframe=True, database=None):
     """
 
+    Master function to query the submitted Energy, Generator Reserve and IL
+    offers in the NZEM. Has some basic filters as well as the ability to return
+    the
+
     Parameters:
     -----------
     offer_type: What type of offer to query, e.g. Energy, PLSR or IL
@@ -275,7 +279,14 @@ def query_offer(offer_type, dates=None, begin_date=None, end_date=None,
 
     # Optional to return it as an OfferFrame
     if as_offerframe:
-        warnings.warn('Metadata may be incomplete')
+        try:
+            from OfferPandas import Frame
+        except ImportError:
+            raise ImportError('OfferPandas has not been installed')
+
+        warnings.warn(
+            'Metadata may be incomplete or erroneous use at your own risk')
+
         df = Frame(offers)
         return df.modify_frame()
 
